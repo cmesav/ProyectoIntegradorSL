@@ -14,7 +14,7 @@ class RepositorioDetallesTransaccion:
             lista = []
             for elemento in cursor:
                 entidad = DetalleTransaccion.DetalleTransaccion()
-                entidad.SetIdDetalle(elemento[0])
+                entidad.SetId(elemento[0])
                 entidad.SetIdTransaccion(elemento[1])
                 entidad.SetIdProducto(elemento[2])
                 entidad.SetCantidad(elemento[3])

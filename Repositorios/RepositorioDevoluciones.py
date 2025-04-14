@@ -14,7 +14,7 @@ class RepositorioDevoluciones:
             lista = []
             for elemento in cursor:
                 entidad = Devolucion.Devolucion()
-                entidad.SetIdDevolucion(elemento[0])
+                entidad.SetId(elemento[0])
                 entidad.SetIdTransaccion(elemento[1])
                 entidad.SetMotivo(elemento[2])
                 entidad.SetFecha(elemento[3])
