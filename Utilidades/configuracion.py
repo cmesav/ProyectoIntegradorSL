@@ -1,8 +1,8 @@
 class Configuracion:
-         str_connection = """
+	strConnection: str = """
         Driver={MySQL ODBC 9.2 Unicode Driver};
         Server=localhost;
-        Database=SistemaTransacciones;
+        Database=sistematransacciones;
         PORT=3306;
-        user=root;
-    """
+        user=user_ptyhon;
+        password=123456""";
