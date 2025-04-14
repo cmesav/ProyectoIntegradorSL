@@ -1,20 +1,29 @@
 import pyodbc
-from Utilidades import Configuracion
+from Entidades import Rol
+from Utilidades import configuracion
 
 class RepositorioRoles:
 
     def ListarRoles(self) -> None:
         try:
-            conexion = pyodbc.connect(Configuracion.Configuracion.strConnection)
+            conexion = pyodbc.connect(configuracion.Configuracion.strConnection)
             consulta = """SELECT * FROM Roles"""
             cursor = conexion.cursor()
             cursor.execute(consulta)
 
+            lista = []
             for elemento in cursor:
-                print(elemento)
+                entidad = Rol.Roles()
+                entidad.SetIdRol(elemento[0])
+                entidad.SetNombreRol(elemento[1])
+                lista.append(entidad)
 
             cursor.close()
             conexion.close()
+
+            for rol in lista:
+                print(f"{rol.GetIdRol()}, {rol.GetNombreRol()}")
+
         except Exception as ex:
             print(str(ex))
 

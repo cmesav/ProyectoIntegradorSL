@@ -1,22 +1,34 @@
 import pyodbc
-from Utilidades import Configuracion
+from Entidades import Devolucion
+from Utilidades import configuracion
 
 class RepositorioDevoluciones:
 
     def ListarDevoluciones(self) -> None:
         try:
-            conexion = pyodbc.connect(Configuracion.Configuracion.strConnection)
+            conexion = pyodbc.connect(configuracion.Configuracion.strConnection)
             consulta = """SELECT * FROM Devoluciones"""
             cursor = conexion.cursor()
             cursor.execute(consulta)
 
+            lista = []
             for elemento in cursor:
-                print(elemento)
+                entidad = Devolucion.Devoluciones()
+                entidad.SetIdDevolucion(elemento[0])
+                entidad.SetIdTransaccion(elemento[1])
+                entidad.SetMotivo(elemento[2])
+                entidad.SetFecha(elemento[3])
+                lista.append(entidad)
 
             cursor.close()
             conexion.close()
+
+            for devolucion in lista:
+                print(f"{devolucion.GetIdDevolucion()}, {devolucion.GetIdTransaccion()}, {devolucion.GetMotivo()}, {devolucion.GetFecha()}")
+
         except Exception as ex:
             print(str(ex))
+
 
     def InsertarDevolucion(self, id_transaccion: int, motivo: str, fecha: str) -> None:
         try:

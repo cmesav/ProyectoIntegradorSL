@@ -1,22 +1,32 @@
 import pyodbc
-from Utilidades import Configuracion
+from Entidades import Categoria
+from Utilidades import configuracion
 
 class RepositorioCategorias:
 
     def ListarCategorias(self) -> None:
         try:
-            conexion = pyodbc.connect(Configuracion.Configuracion.strConnection)
+            conexion = pyodbc.connect(configuracion.Configuracion.strConnection)
             consulta = """SELECT * FROM Categorias"""
             cursor = conexion.cursor()
             cursor.execute(consulta)
 
+            lista = []
             for elemento in cursor:
-                print(elemento)
+                entidad = Categoria.Categorias()
+                entidad.SetIdCategoria(elemento[0])
+                entidad.SetNombreCategoria(elemento[1])
+                lista.append(entidad)
 
             cursor.close()
             conexion.close()
+
+            for categoria in lista:
+                print(f"{categoria.GetIdCategoria()}, {categoria.GetNombreCategoria()}")
+
         except Exception as ex:
             print(str(ex))
+
 
     def InsertarCategoria(self, nombre_categoria: str) -> None:
         try:

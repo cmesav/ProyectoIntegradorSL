@@ -1,22 +1,34 @@
 import pyodbc
-from Utilidades import Configuracion
+from Entidades import Producto
+from Utilidades import configuracion
 
 class RepositorioProductos:
 
     def ListarProductos(self) -> None:
         try:
-            conexion = pyodbc.connect(Configuracion.Configuracion.strConnection)
+            conexion = pyodbc.connect(configuracion.Configuracion.strConnection)
             consulta = """SELECT * FROM Productos"""
             cursor = conexion.cursor()
             cursor.execute(consulta)
 
+            lista = []
             for elemento in cursor:
-                print(elemento)
+                entidad = Producto.Productos()
+                entidad.SetIdProducto(elemento[0])
+                entidad.SetNombreProducto(elemento[1])
+                entidad.SetIdCategoria(elemento[2])
+                entidad.SetPrecio(elemento[3])
+                lista.append(entidad)
 
             cursor.close()
             conexion.close()
+
+            for producto in lista:
+                print(f"{producto.GetIdProducto()}, {producto.GetNombreProducto()}, {producto.GetIdCategoria()}, {producto.GetPrecio()}")
+
         except Exception as ex:
             print(str(ex))
+
 
     def ListarProductosConCategoria(self) -> None:
         try:

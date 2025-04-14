@@ -1,22 +1,34 @@
 import pyodbc
-from Utilidades import Configuracion
+from Entidades import DetalleTransaccion
+from Utilidades import configuracion
 
 class RepositorioDetallesTransaccion:
 
     def ListarDetallesTransaccion(self) -> None:
         try:
-            conexion = pyodbc.connect(Configuracion.Configuracion.strConnection)
+            conexion = pyodbc.connect(configuracion.Configuracion.strConnection)
             consulta = """SELECT * FROM DetallesTransaccion"""
             cursor = conexion.cursor()
             cursor.execute(consulta)
 
+            lista = []
             for elemento in cursor:
-                print(elemento)
+                entidad = DetalleTransaccion.DetallesTransaccion()
+                entidad.SetIdDetalle(elemento[0])
+                entidad.SetIdTransaccion(elemento[1])
+                entidad.SetIdProducto(elemento[2])
+                entidad.SetCantidad(elemento[3])
+                lista.append(entidad)
 
             cursor.close()
             conexion.close()
+
+            for detalle in lista:
+                print(f"{detalle.GetIdDetalle()}, {detalle.GetIdTransaccion()}, {detalle.GetIdProducto()}, {detalle.GetCantidad()}")
+
         except Exception as ex:
             print(str(ex))
+
 
     def InsertarDetalleTransaccion(self, id_transaccion: int, id_producto: int, cantidad: int) -> None:
         try:

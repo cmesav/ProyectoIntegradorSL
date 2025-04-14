@@ -1,20 +1,30 @@
 import pyodbc
-from Utilidades import Configuracion
+from Entidades import Inventario
+from Utilidades import configuracion
 
 class RepositorioInventario:
 
     def ListarInventario(self) -> None:
         try:
-            conexion = pyodbc.connect(Configuracion.Configuracion.strConnection)
+            conexion = pyodbc.connect(configuracion.Configuracion.strConnection)
             consulta = """SELECT * FROM Inventario"""
             cursor = conexion.cursor()
             cursor.execute(consulta)
 
+            lista = []
             for elemento in cursor:
-                print(elemento)
+                entidad = Inventario.Inventario()
+                entidad.SetIdInventario(elemento[0])
+                entidad.SetIdProducto(elemento[1])
+                entidad.SetCantidadDisponible(elemento[2])
+                lista.append(entidad)
 
             cursor.close()
             conexion.close()
+
+            for inventario in lista:
+                print(f"{inventario.GetIdInventario()}, {inventario.GetIdProducto()}, {inventario.GetCantidadDisponible()}")
+
         except Exception as ex:
             print(str(ex))
 

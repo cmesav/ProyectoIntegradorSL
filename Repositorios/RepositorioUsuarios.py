@@ -1,20 +1,32 @@
 import pyodbc
-from Utilidades import Configuracion
+from Entidades import Usuario
+from Utilidades import configuracion
 
 class RepositorioUsuarios:
 
     def ListarUsuarios(self) -> None:
         try:
-            conexion = pyodbc.connect(Configuracion.Configuracion.strConnection)
+            conexion = pyodbc.connect(configuracion.Configuracion.strConnection)
             consulta = """SELECT * FROM Usuarios"""
             cursor = conexion.cursor()
             cursor.execute(consulta)
 
+            lista = []
             for elemento in cursor:
-                print(elemento)
+                entidad = Usuario.Usuarios()
+                entidad.SetIdUsuario(elemento[0])
+                entidad.SetNombre(elemento[1])
+                entidad.SetCorreo(elemento[2])
+                entidad.SetContrasena(elemento[3])
+                entidad.SetIdRol(elemento[4])
+                lista.append(entidad)
 
             cursor.close()
             conexion.close()
+
+            for usuario in lista:
+                print(f"{usuario.GetIdUsuario()}, {usuario.GetNombre()}, {usuario.GetCorreo()}, {usuario.GetIdRol()}")
+
         except Exception as ex:
             print(str(ex))
 

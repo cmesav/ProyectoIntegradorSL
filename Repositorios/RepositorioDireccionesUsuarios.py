@@ -1,22 +1,33 @@
 import pyodbc
-from Utilidades import Configuracion
+from Entidades import DireccionUsuario
+from Utilidades import configuracion
 
 class RepositorioDireccionesUsuarios:
 
     def ListarDireccionesUsuarios(self) -> None:
         try:
-            conexion = pyodbc.connect(Configuracion.Configuracion.strConnection)
+            conexion = pyodbc.connect(configuracion.Configuracion.strConnection)
             consulta = """SELECT * FROM DireccionesUsuarios"""
             cursor = conexion.cursor()
             cursor.execute(consulta)
 
+            lista = []
             for elemento in cursor:
-                print(elemento)
+                entidad = DireccionUsuario.DireccionesUsuarios()
+                entidad.SetIdDireccion(elemento[0])
+                entidad.SetIdUsuario(elemento[1])
+                entidad.SetDireccion(elemento[2])
+                lista.append(entidad)
 
             cursor.close()
             conexion.close()
+
+            for direccion in lista:
+                print(f"{direccion.GetIdDireccion()}, {direccion.GetIdUsuario()}, {direccion.GetDireccion()}")
+
         except Exception as ex:
             print(str(ex))
+
 
     def InsertarDireccionUsuario(self, id_usuario: int, direccion: str) -> None:
         try:

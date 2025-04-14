@@ -1,22 +1,32 @@
 import pyodbc
-from Utilidades import Configuracion
+from Entidades import EstadoTransaccion
+from Utilidades import configuracion
 
 class RepositorioEstadoTransaccion:
 
     def ListarEstadoTransaccion(self) -> None:
         try:
-            conexion = pyodbc.connect(Configuracion.Configuracion.strConnection)
+            conexion = pyodbc.connect(configuracion.Configuracion.strConnection)
             consulta = """SELECT * FROM EstadoTransaccion"""
             cursor = conexion.cursor()
             cursor.execute(consulta)
 
+            lista = []
             for elemento in cursor:
-                print(elemento)
+                entidad = EstadoTransaccion.EstadoTransaccion()
+                entidad.SetIdEstadoTransaccion(elemento[0])
+                entidad.SetNombreEstado(elemento[1])
+                lista.append(entidad)
 
             cursor.close()
             conexion.close()
+
+            for estado in lista:
+                print(f"{estado.GetIdEstadoTransaccion()}, {estado.GetNombreEstado()}")
+
         except Exception as ex:
             print(str(ex))
+
 
     def InsertarEstadoTransaccion(self, nombre_estado: str) -> None:
         try:
