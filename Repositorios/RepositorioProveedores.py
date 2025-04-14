@@ -1,5 +1,5 @@
 import pyodbc
-from Entidades import Proveedores
+from Entidades import Proveedor
 from Utilidades import configuracion
 
 class RepositorioProveedores:
@@ -13,7 +13,7 @@ class RepositorioProveedores:
 
             lista = []
             for elemento in cursor:
-                entidad = Proveedores.Proveedores()
+                entidad = Proveedor.Proveedor()
                 entidad.SetIdProveedor(elemento[0])
                 entidad.SetNombreProveedor(elemento[1])
                 entidad.SetContacto(elemento[2])
@@ -31,7 +31,7 @@ class RepositorioProveedores:
 
     def InsertarProveedor(self, nombre_proveedor: str, contacto: str) -> None:
         try:
-            conexion = pyodbc.connect(Configuracion.Configuracion.strConnection)
+            conexion = pyodbc.connect(configuracion.Configuracion.strConnection)
             cursor = conexion.cursor()
 
             consulta = """INSERT INTO Proveedores (NombreProveedor, Contacto) VALUES (?, ?)"""

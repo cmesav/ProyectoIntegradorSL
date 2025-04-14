@@ -13,7 +13,7 @@ class RepositorioCategorias:
 
             lista = []
             for elemento in cursor:
-                entidad = Categoria.Categorias()
+                entidad = Categoria.Categoria()
                 entidad.SetIdCategoria(elemento[0])
                 entidad.SetNombreCategoria(elemento[1])
                 lista.append(entidad)
@@ -30,7 +30,7 @@ class RepositorioCategorias:
 
     def InsertarCategoria(self, nombre_categoria: str) -> None:
         try:
-            conexion = pyodbc.connect(Configuracion.Configuracion.strConnection)
+            conexion = pyodbc.connect(configuracion.Configuracion.strConnection)
             cursor = conexion.cursor()
 
             consulta = """INSERT INTO Categorias (NombreCategoria) VALUES (?)"""

@@ -13,7 +13,7 @@ class RepositorioNotificaciones:
 
             lista = []
             for elemento in cursor:
-                entidad = Notificacion.Notificaciones()
+                entidad = Notificacion.Notificacion()
                 entidad.SetIdNotificacion(elemento[0])
                 entidad.SetIdUsuario(elemento[1])
                 entidad.SetMensaje(elemento[2])
@@ -32,7 +32,7 @@ class RepositorioNotificaciones:
 
     def InsertarNotificacion(self, id_usuario: int, mensaje: str, fecha: str) -> None:
         try:
-            conexion = pyodbc.connect(Configuracion.Configuracion.strConnection)
+            conexion = pyodbc.connect(configuracion.Configuracion.strConnection)
             cursor = conexion.cursor()
 
             consulta = """INSERT INTO Notificaciones (IDUsuario, Mensaje, Fecha) VALUES (?, ?, ?)"""

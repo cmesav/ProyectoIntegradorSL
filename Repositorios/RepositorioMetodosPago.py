@@ -13,7 +13,7 @@ class RepositorioMetodosPago:
 
             lista = []
             for elemento in cursor:
-                entidad = MetodoPago.MetodosPago()
+                entidad = MetodoPago.MetodoPago()
                 entidad.SetIdMetodoPago(elemento[0])
                 entidad.SetNombreMetodo(elemento[1])
                 lista.append(entidad)
@@ -30,7 +30,7 @@ class RepositorioMetodosPago:
 
     def InsertarMetodoPago(self, nombre_metodo: str) -> None:
         try:
-            conexion = pyodbc.connect(Configuracion.Configuracion.strConnection)
+            conexion = pyodbc.connect(configuracion.Configuracion.strConnection)
             cursor = conexion.cursor()
 
             consulta = """INSERT INTO MetodosPago (NombreMetodo) VALUES (?)"""

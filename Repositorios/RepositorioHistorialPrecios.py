@@ -13,7 +13,7 @@ class RepositorioHistorialPrecios:
 
             lista = []
             for elemento in cursor:
-                entidad = HistorialPrecio.HistorialPrecios()
+                entidad = HistorialPrecio.HistorialPrecio()
                 entidad.SetIdHistorial(elemento[0])
                 entidad.SetIdProducto(elemento[1])
                 entidad.SetFecha(elemento[2])
@@ -33,7 +33,7 @@ class RepositorioHistorialPrecios:
 
     def InsertarHistorialPrecio(self, id_producto: int, fecha: str, precio_antiguo: float, precio_nuevo: float) -> None:
         try:
-            conexion = pyodbc.connect(Configuracion.Configuracion.strConnection)
+            conexion = pyodbc.connect(configuracion.Configuracion.strConnection)
             cursor = conexion.cursor()
 
             consulta = """INSERT INTO HistorialPrecios (IDProducto, Fecha, PrecioAntiguo, PrecioNuevo) VALUES (?, ?, ?, ?)"""

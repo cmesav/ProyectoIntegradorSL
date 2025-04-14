@@ -13,7 +13,7 @@ class RepositorioRoles:
 
             lista = []
             for elemento in cursor:
-                entidad = Rol.Roles()
+                entidad = Rol.Rol()
                 entidad.SetIdRol(elemento[0])
                 entidad.SetNombreRol(elemento[1])
                 lista.append(entidad)
@@ -29,7 +29,7 @@ class RepositorioRoles:
 
     def InsertarRol(self, nombre_rol: str) -> None:
         try:
-            conexion = pyodbc.connect(Configuracion.Configuracion.strConnection)
+            conexion = pyodbc.connect(configuracion.Configuracion.strConnection)
             cursor = conexion.cursor()
 
             consulta = """INSERT INTO Roles (NombreRol) VALUES (?)"""

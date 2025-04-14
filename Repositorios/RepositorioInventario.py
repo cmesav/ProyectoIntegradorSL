@@ -30,7 +30,7 @@ class RepositorioInventario:
 
     def ActualizarInventario(self, id_producto: int, cantidad_disponible: int) -> None:
         try:
-            conexion = pyodbc.connect(Configuracion.Configuracion.strConnection)
+            conexion = pyodbc.connect(configuracion.Configuracion.strConnection)
             cursor = conexion.cursor()
 
             consulta = """UPDATE Inventario SET CantidadDisponible = ? WHERE IDProducto = ?"""

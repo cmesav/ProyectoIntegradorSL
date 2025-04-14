@@ -13,7 +13,7 @@ class RepositorioDevoluciones:
 
             lista = []
             for elemento in cursor:
-                entidad = Devolucion.Devoluciones()
+                entidad = Devolucion.Devolucion()
                 entidad.SetIdDevolucion(elemento[0])
                 entidad.SetIdTransaccion(elemento[1])
                 entidad.SetMotivo(elemento[2])
@@ -32,7 +32,7 @@ class RepositorioDevoluciones:
 
     def InsertarDevolucion(self, id_transaccion: int, motivo: str, fecha: str) -> None:
         try:
-            conexion = pyodbc.connect(Configuracion.Configuracion.strConnection)
+            conexion = pyodbc.connect(configuracion.Configuracion.strConnection)
             cursor = conexion.cursor()
 
             consulta = """INSERT INTO Devoluciones (IDTransaccion, Motivo, Fecha) VALUES (?, ?, ?)"""

@@ -13,7 +13,7 @@ class RepositorioUsuarios:
 
             lista = []
             for elemento in cursor:
-                entidad = Usuario.Usuarios()
+                entidad = Usuario.Usuario()
                 entidad.SetIdUsuario(elemento[0])
                 entidad.SetNombre(elemento[1])
                 entidad.SetCorreo(elemento[2])
@@ -32,7 +32,7 @@ class RepositorioUsuarios:
 
     def ListarUsuariosDetallado(self) -> None:
         try:
-            conexion = pyodbc.connect(Configuracion.Configuracion.strConnection)
+            conexion = pyodbc.connect(configuracion.Configuracion.strConnection)
             consulta = """SELECT u.IDUsuario, u.Nombre, u.Correo, r.NombreRol 
                           FROM Usuarios u INNER JOIN Roles r ON u.IDRol = r.IDRol"""
             cursor = conexion.cursor()
@@ -48,7 +48,7 @@ class RepositorioUsuarios:
 
     def InsertarUsuario(self, nombre: str, correo: str, contrasena: str, id_rol: int) -> None:
         try:
-            conexion = pyodbc.connect(Configuracion.Configuracion.strConnection)
+            conexion = pyodbc.connect(configuracion.Configuracion.strConnection)
             cursor = conexion.cursor()
 
             consulta = """INSERT INTO Usuarios (Nombre, Correo, Contrasena, IDRol) 

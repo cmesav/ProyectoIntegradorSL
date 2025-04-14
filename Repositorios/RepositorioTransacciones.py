@@ -13,7 +13,7 @@ class RepositorioTransacciones:
 
             lista = []
             for elemento in cursor:
-                entidad = Transaccion.Transacciones()
+                entidad = Transaccion.Transaccion()
                 entidad.SetIdTransaccion(elemento[0])
                 entidad.SetIdUsuario(elemento[1])
                 entidad.SetFecha(elemento[2])
@@ -33,7 +33,7 @@ class RepositorioTransacciones:
 
     def InsertarTransaccion(self, id_usuario: int, fecha: str, id_metodo_pago: int, id_estado_transaccion: int) -> None:
         try:
-            conexion = pyodbc.connect(Configuracion.Configuracion.strConnection)
+            conexion = pyodbc.connect(configuracion.Configuracion.strConnection)
             cursor = conexion.cursor()
 
             consulta = """INSERT INTO Transacciones (IDUsuario, Fecha, IDMetodoPago, IDEstadoTransaccion) 

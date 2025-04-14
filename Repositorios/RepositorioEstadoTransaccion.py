@@ -30,7 +30,7 @@ class RepositorioEstadoTransaccion:
 
     def InsertarEstadoTransaccion(self, nombre_estado: str) -> None:
         try:
-            conexion = pyodbc.connect(Configuracion.Configuracion.strConnection)
+            conexion = pyodbc.connect(configuracion.Configuracion.strConnection)
             cursor = conexion.cursor()
 
             consulta = """INSERT INTO EstadoTransaccion (NombreEstado) VALUES (?)"""

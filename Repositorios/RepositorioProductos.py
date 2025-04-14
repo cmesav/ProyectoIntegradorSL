@@ -13,7 +13,7 @@ class RepositorioProductos:
 
             lista = []
             for elemento in cursor:
-                entidad = Producto.Productos()
+                entidad = Producto.Producto()
                 entidad.SetIdProducto(elemento[0])
                 entidad.SetNombreProducto(elemento[1])
                 entidad.SetIdCategoria(elemento[2])
@@ -32,7 +32,7 @@ class RepositorioProductos:
 
     def ListarProductosConCategoria(self) -> None:
         try:
-            conexion = pyodbc.connect(Configuracion.Configuracion.strConnection)
+            conexion = pyodbc.connect(configuracion.Configuracion.strConnection)
             consulta = """SELECT p.IDProducto, p.NombreProducto, c.NombreCategoria, p.Precio 
                           FROM Productos p INNER JOIN Categorias c ON p.IDCategoria = c.IDCategoria"""
             cursor = conexion.cursor()
@@ -48,7 +48,7 @@ class RepositorioProductos:
 
     def InsertarProducto(self, nombre: str, id_categoria: int, precio: float) -> None:
         try:
-            conexion = pyodbc.connect(Configuracion.Configuracion.strConnection)
+            conexion = pyodbc.connect(configuracion.Configuracion.strConnection)
             cursor = conexion.cursor()
 
             consulta = """INSERT INTO Productos (NombreProducto, IDCategoria, Precio) VALUES (?, ?, ?)"""

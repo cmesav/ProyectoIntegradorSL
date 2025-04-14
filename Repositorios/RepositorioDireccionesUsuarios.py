@@ -13,7 +13,7 @@ class RepositorioDireccionesUsuarios:
 
             lista = []
             for elemento in cursor:
-                entidad = DireccionUsuario.DireccionesUsuarios()
+                entidad = DireccionUsuario.DireccionUsuario()
                 entidad.SetIdDireccion(elemento[0])
                 entidad.SetIdUsuario(elemento[1])
                 entidad.SetDireccion(elemento[2])
@@ -31,7 +31,7 @@ class RepositorioDireccionesUsuarios:
 
     def InsertarDireccionUsuario(self, id_usuario: int, direccion: str) -> None:
         try:
-            conexion = pyodbc.connect(Configuracion.Configuracion.strConnection)
+            conexion = pyodbc.connect(configuracion.Configuracion.strConnection)
             cursor = conexion.cursor()
 
             consulta = """INSERT INTO DireccionesUsuarios (IDUsuario, Direccion) VALUES (?, ?)"""
