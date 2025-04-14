@@ -2,18 +2,23 @@ CREATE DATABASE SistemaTransacciones;
 
 USE SistemaTransacciones;
 
+CREATE TABLE Roles (
+    IDRol INT AUTO_INCREMENT PRIMARY KEY,
+    NombreRol VARCHAR(50)
+);
+
 CREATE TABLE Usuarios (
     IDUsuario INT AUTO_INCREMENT PRIMARY KEY,
     Nombre VARCHAR(100),
     Correo VARCHAR(100),
-    Contraseña VARCHAR(255),
+    Contrasena VARCHAR(255),
     IDRol INT,
     FOREIGN KEY (IDRol) REFERENCES Roles(IDRol)
 );
 
-CREATE TABLE Roles (
-    IDRol INT AUTO_INCREMENT PRIMARY KEY,
-    NombreRol VARCHAR(50)
+CREATE TABLE Categorias (
+    IDCategoria INT AUTO_INCREMENT PRIMARY KEY,
+    NombreCategoria VARCHAR(100)
 );
 
 CREATE TABLE Productos (
@@ -21,12 +26,17 @@ CREATE TABLE Productos (
     NombreProducto VARCHAR(100),
     IDCategoria INT,
     Precio DECIMAL(10,2),
-    FOREIGN KEY (IDCategoria) REFERENCES Categorías(IDCategoria)
+    FOREIGN KEY (IDCategoria) REFERENCES Categorias(IDCategoria)
 );
 
-CREATE TABLE Categorías (
-    IDCategoria INT AUTO_INCREMENT PRIMARY KEY,
-    NombreCategoria VARCHAR(100)
+CREATE TABLE EstadoTransaccion (
+    IDEstadoTransaccion INT AUTO_INCREMENT PRIMARY KEY,
+    NombreEstado VARCHAR(100)
+);
+
+CREATE TABLE MetodosPago (
+    IDMetodoPago INT AUTO_INCREMENT PRIMARY KEY,
+    NombreMetodo VARCHAR(100)
 );
 
 CREATE TABLE Transacciones (
@@ -36,16 +46,11 @@ CREATE TABLE Transacciones (
     IDMetodoPago INT,
     IDEstadoTransaccion INT,
     FOREIGN KEY (IDUsuario) REFERENCES Usuarios(IDUsuario),
-    FOREIGN KEY (IDMetodoPago) REFERENCES MétodosPago(IDMetodoPago),
-    FOREIGN KEY (IDEstadoTransaccion) REFERENCES EstadoTransacción(IDEstadoTransaccion)
+    FOREIGN KEY (IDMetodoPago) REFERENCES MetodosPago(IDMetodoPago),
+    FOREIGN KEY (IDEstadoTransaccion) REFERENCES EstadoTransaccion(IDEstadoTransaccion)
 );
 
-CREATE TABLE MétodosPago (
-    IDMetodoPago INT AUTO_INCREMENT PRIMARY KEY,
-    NombreMetodo VARCHAR(100)
-);
-
-CREATE TABLE DetallesTransacción (
+CREATE TABLE DetallesTransaccion (
     IDDetalle INT AUTO_INCREMENT PRIMARY KEY,
     IDTransaccion INT,
     IDProducto INT,
@@ -70,13 +75,8 @@ CREATE TABLE Proveedores (
 CREATE TABLE DireccionesUsuarios (
     IDDireccion INT AUTO_INCREMENT PRIMARY KEY,
     IDUsuario INT,
-    Dirección VARCHAR(255),
+    Direccion VARCHAR(255),
     FOREIGN KEY (IDUsuario) REFERENCES Usuarios(IDUsuario)
-);
-
-CREATE TABLE EstadoTransacción (
-    IDEstadoTransaccion INT AUTO_INCREMENT PRIMARY KEY,
-    NombreEstado VARCHAR(100)
 );
 
 CREATE TABLE HistorialPrecios (
@@ -89,7 +89,7 @@ CREATE TABLE HistorialPrecios (
 );
 
 CREATE TABLE Devoluciones (
-    IDDevolución INT AUTO_INCREMENT PRIMARY KEY,
+    IDDevolucion INT AUTO_INCREMENT PRIMARY KEY,
     IDTransaccion INT,
     Motivo VARCHAR(255),
     Fecha DATE,
@@ -97,7 +97,7 @@ CREATE TABLE Devoluciones (
 );
 
 CREATE TABLE Notificaciones (
-    IDNotificación INT AUTO_INCREMENT PRIMARY KEY,
+    IDNotificacion INT AUTO_INCREMENT PRIMARY KEY,
     IDUsuario INT,
     Mensaje VARCHAR(255),
     Fecha DATE,
