@@ -43,6 +43,10 @@ print("\nInsertando un método de pago:")
 repositorio_metodos_pago.InsertarMetodoPago("Tarjeta de crédito")
 repositorio_metodos_pago.ListarMetodosPago()
 
+print("\nInsertando un estado de transacción:")
+repositorio_estado_transaccion.InsertarEstadoTransaccion("Aprobado")
+repositorio_estado_transaccion.ListarEstadoTransaccion()
+
 print("\nInsertando una transacción:")
 repositorio_transacciones.InsertarTransaccion(1, "2025-04-14", 1, 1)
 repositorio_transacciones.ListarTransacciones()
