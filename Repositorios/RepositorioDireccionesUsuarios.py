@@ -14,7 +14,7 @@ class RepositorioDireccionesUsuarios:
             lista = []
             for elemento in cursor:
                 entidad = DireccionUsuario.DireccionUsuario()
-                entidad.SetIdDireccion(elemento[0])
+                entidad.SetId(elemento[0])
                 entidad.SetIdUsuario(elemento[1])
                 entidad.SetDireccion(elemento[2])
                 lista.append(entidad)
@@ -23,7 +23,7 @@ class RepositorioDireccionesUsuarios:
             conexion.close()
 
             for direccion in lista:
-                print(f"{direccion.GetIdDireccion()}, {direccion.GetIdUsuario()}, {direccion.GetDireccion()}")
+                print(f"{direccion.GetId()}, {direccion.GetIdUsuario()}, {direccion.GetDireccion()}")
 
         except Exception as ex:
             print(str(ex))

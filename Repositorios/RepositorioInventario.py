@@ -14,7 +14,7 @@ class RepositorioInventario:
             lista = []
             for elemento in cursor:
                 entidad = Inventario.Inventario()
-                entidad.SetIdInventario(elemento[0])
+                entidad.SetId(elemento[0])
                 entidad.SetIdProducto(elemento[1])
                 entidad.SetCantidadDisponible(elemento[2])
                 lista.append(entidad)
@@ -23,7 +23,7 @@ class RepositorioInventario:
             conexion.close()
 
             for inventario in lista:
-                print(f"{inventario.GetIdInventario()}, {inventario.GetIdProducto()}, {inventario.GetCantidadDisponible()}")
+                print(f"{inventario.GetId()}, {inventario.GetIdProducto()}, {inventario.GetCantidadDisponible()}")
 
         except Exception as ex:
             print(str(ex))

@@ -24,7 +24,7 @@ class RepositorioDetallesTransaccion:
             conexion.close()
 
             for detalle in lista:
-                print(f"{detalle.GetIdDetalle()}, {detalle.GetIdTransaccion()}, {detalle.GetIdProducto()}, {detalle.GetCantidad()}")
+                print(f"{detalle.GetId()}, {detalle.GetIdTransaccion()}, {detalle.GetIdProducto()}, {detalle.GetCantidad()}")
 
         except Exception as ex:
             print(str(ex))

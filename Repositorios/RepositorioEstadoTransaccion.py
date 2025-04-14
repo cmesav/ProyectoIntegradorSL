@@ -14,7 +14,7 @@ class RepositorioEstadoTransaccion:
             lista = []
             for elemento in cursor:
                 entidad = EstadoTransaccion.EstadoTransaccion()
-                entidad.SetIdEstadoTransaccion(elemento[0])
+                entidad.SetId(elemento[0])
                 entidad.SetNombreEstado(elemento[1])
                 lista.append(entidad)
 
@@ -22,7 +22,7 @@ class RepositorioEstadoTransaccion:
             conexion.close()
 
             for estado in lista:
-                print(f"{estado.GetIdEstadoTransaccion()}, {estado.GetNombreEstado()}")
+                print(f"{estado.GetId()}, {estado.GetNombreEstado()}")
 
         except Exception as ex:
             print(str(ex))

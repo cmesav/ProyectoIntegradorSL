@@ -14,7 +14,7 @@ class RepositorioMetodosPago:
             lista = []
             for elemento in cursor:
                 entidad = MetodoPago.MetodoPago()
-                entidad.SetIdMetodoPago(elemento[0])
+                entidad.SetId(elemento[0])
                 entidad.SetNombreMetodo(elemento[1])
                 lista.append(entidad)
 
@@ -22,7 +22,7 @@ class RepositorioMetodosPago:
             conexion.close()
 
             for metodo in lista:
-                print(f"{metodo.GetIdMetodoPago()}, {metodo.GetNombreMetodo()}")
+                print(f"{metodo.GetId()}, {metodo.GetNombreMetodo()}")
 
         except Exception as ex:
             print(str(ex))

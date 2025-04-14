@@ -14,7 +14,7 @@ class RepositorioTransacciones:
             lista = []
             for elemento in cursor:
                 entidad = Transaccion.Transaccion()
-                entidad.SetIdTransaccion(elemento[0])
+                entidad.SetId(elemento[0])
                 entidad.SetIdUsuario(elemento[1])
                 entidad.SetFecha(elemento[2])
                 entidad.SetIdMetodoPago(elemento[3])
@@ -25,7 +25,7 @@ class RepositorioTransacciones:
             conexion.close()
 
             for transaccion in lista:
-                print(f"{transaccion.GetIdTransaccion()}, {transaccion.GetIdUsuario()}, {transaccion.GetFecha()}, {transaccion.GetIdMetodoPago()}, {transaccion.GetIdEstadoTransaccion()}")
+                print(f"{transaccion.GetId()}, {transaccion.GetIdUsuario()}, {transaccion.GetFecha()}, {transaccion.GetIdMetodoPago()}, {transaccion.GetIdEstadoTransaccion()}")
 
         except Exception as ex:
             print(str(ex))

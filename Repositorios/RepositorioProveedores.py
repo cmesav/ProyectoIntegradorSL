@@ -14,7 +14,7 @@ class RepositorioProveedores:
             lista = []
             for elemento in cursor:
                 entidad = Proveedor.Proveedor()
-                entidad.SetIdProveedor(elemento[0])
+                entidad.SetId(elemento[0])
                 entidad.SetNombreProveedor(elemento[1])
                 entidad.SetContacto(elemento[2])
                 lista.append(entidad)
@@ -23,7 +23,7 @@ class RepositorioProveedores:
             conexion.close()
 
             for proveedor in lista:
-                print(f"{proveedor.GetIdProveedor()}, {proveedor.GetNombreProveedor()}, {proveedor.GetContacto()}")
+                print(f"{proveedor.GetId()}, {proveedor.GetNombreProveedor()}, {proveedor.GetContacto()}")
 
         except Exception as ex:
             print(str(ex))

@@ -24,7 +24,7 @@ class RepositorioDevoluciones:
             conexion.close()
 
             for devolucion in lista:
-                print(f"{devolucion.GetIdDevolucion()}, {devolucion.GetIdTransaccion()}, {devolucion.GetMotivo()}, {devolucion.GetFecha()}")
+                print(f"{devolucion.GetId()}, {devolucion.GetIdTransaccion()}, {devolucion.GetMotivo()}, {devolucion.GetFecha()}")
 
         except Exception as ex:
             print(str(ex))

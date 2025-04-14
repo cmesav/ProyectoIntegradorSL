@@ -14,7 +14,7 @@ class RepositorioCategorias:
             lista = []
             for elemento in cursor:
                 entidad = Categoria.Categoria()
-                entidad.SetIdCategoria(elemento[0])
+                entidad.SetId(elemento[0])
                 entidad.SetNombreCategoria(elemento[1])
                 lista.append(entidad)
 
@@ -22,7 +22,7 @@ class RepositorioCategorias:
             conexion.close()
 
             for categoria in lista:
-                print(f"{categoria.GetIdCategoria()}, {categoria.GetNombreCategoria()}")
+                print(f"{categoria.GetId()}, {categoria.GetNombreCategoria()}")
 
         except Exception as ex:
             print(str(ex))

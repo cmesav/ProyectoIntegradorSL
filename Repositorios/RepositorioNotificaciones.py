@@ -14,7 +14,7 @@ class RepositorioNotificaciones:
             lista = []
             for elemento in cursor:
                 entidad = Notificacion.Notificacion()
-                entidad.SetIdNotificacion(elemento[0])
+                entidad.SetId(elemento[0])
                 entidad.SetIdUsuario(elemento[1])
                 entidad.SetMensaje(elemento[2])
                 entidad.SetFecha(elemento[3])
@@ -24,7 +24,7 @@ class RepositorioNotificaciones:
             conexion.close()
 
             for notificacion in lista:
-                print(f"{notificacion.GetIdNotificacion()}, {notificacion.GetIdUsuario()}, {notificacion.GetMensaje()}, {notificacion.GetFecha()}")
+                print(f"{notificacion.GetId()}, {notificacion.GetIdUsuario()}, {notificacion.GetMensaje()}, {notificacion.GetFecha()}")
 
         except Exception as ex:
             print(str(ex))

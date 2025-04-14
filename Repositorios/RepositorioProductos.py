@@ -14,7 +14,7 @@ class RepositorioProductos:
             lista = []
             for elemento in cursor:
                 entidad = Producto.Producto()
-                entidad.SetIdProducto(elemento[0])
+                entidad.SetId(elemento[0])
                 entidad.SetNombreProducto(elemento[1])
                 entidad.SetIdCategoria(elemento[2])
                 entidad.SetPrecio(elemento[3])
@@ -24,7 +24,7 @@ class RepositorioProductos:
             conexion.close()
 
             for producto in lista:
-                print(f"{producto.GetIdProducto()}, {producto.GetNombreProducto()}, {producto.GetIdCategoria()}, {producto.GetPrecio()}")
+                print(f"{producto.GetId()}, {producto.GetNombreProducto()}, {producto.GetIdCategoria()}, {producto.GetPrecio()}")
 
         except Exception as ex:
             print(str(ex))

@@ -14,7 +14,7 @@ class RepositorioUsuarios:
             lista = []
             for elemento in cursor:
                 entidad = Usuario.Usuario()
-                entidad.SetIdUsuario(elemento[0])
+                entidad.SetId(elemento[0])
                 entidad.SetNombre(elemento[1])
                 entidad.SetCorreo(elemento[2])
                 entidad.SetContrasena(elemento[3])
@@ -25,7 +25,7 @@ class RepositorioUsuarios:
             conexion.close()
 
             for usuario in lista:
-                print(f"{usuario.GetIdUsuario()}, {usuario.GetNombre()}, {usuario.GetCorreo()}, {usuario.GetIdRol()}")
+                print(f"{usuario.GetId()}, {usuario.GetNombre()}, {usuario.GetCorreo()}, {usuario.GetIdRol()}")
 
         except Exception as ex:
             print(str(ex))

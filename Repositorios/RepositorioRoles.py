@@ -14,7 +14,7 @@ class RepositorioRoles:
             lista = []
             for elemento in cursor:
                 entidad = Rol.Rol()
-                entidad.SetIdRol(elemento[0])
+                entidad.SetId(elemento[0])
                 entidad.SetNombreRol(elemento[1])
                 lista.append(entidad)
 
@@ -22,7 +22,7 @@ class RepositorioRoles:
             conexion.close()
 
             for rol in lista:
-                print(f"{rol.GetIdRol()}, {rol.GetNombreRol()}")
+                print(f"{rol.GetId()}, {rol.GetNombreRol()}")
 
         except Exception as ex:
             print(str(ex))

@@ -14,7 +14,7 @@ class RepositorioHistorialPrecios:
             lista = []
             for elemento in cursor:
                 entidad = HistorialPrecio.HistorialPrecio()
-                entidad.SetIdHistorial(elemento[0])
+                entidad.SetId(elemento[0])
                 entidad.SetIdProducto(elemento[1])
                 entidad.SetFecha(elemento[2])
                 entidad.SetPrecioAntiguo(elemento[3])
@@ -25,7 +25,7 @@ class RepositorioHistorialPrecios:
             conexion.close()
 
             for historial in lista:
-                print(f"{historial.GetIdHistorial()}, {historial.GetIdProducto()}, {historial.GetFecha()}, {historial.GetPrecioAntiguo()}, {historial.GetPrecioNuevo()}")
+                print(f"{historial.GetId()}, {historial.GetIdProducto()}, {historial.GetFecha()}, {historial.GetPrecioAntiguo()}, {historial.GetPrecioNuevo()}")
 
         except Exception as ex:
             print(str(ex))
