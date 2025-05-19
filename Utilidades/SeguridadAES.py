@@ -1,18 +1,11 @@
-import os
 import binascii
-import hashlib
 from Crypto.Cipher import AES
-from Crypto.Protocol.KDF import PBKDF2
 from Crypto.Random import get_random_bytes
 
 class SeguridadAES:
 
     def __init__(self):
-        if not os.getenv("AES_SECRET_KEY"):
-            nueva_clave = get_random_bytes(32)
-            os.environ["AES_SECRET_KEY"] = binascii.hexlify(nueva_clave).decode()
-
-        self.key = binascii.unhexlify(os.getenv("AES_SECRET_KEY"))
+        self.key = get_random_bytes(32)  # Clave AES de 256 bits generada al inicio
 
     def cifrar(self, valor: str) -> str:
         aes_cipher = AES.new(self.key, AES.MODE_GCM)
@@ -36,4 +29,3 @@ class SeguridadAES:
             return aes_cipher.decrypt_and_verify(ciphertext, auth_tag).decode()
         except Exception as ex:
             return f"Error al descifrar: {ex}"
-
