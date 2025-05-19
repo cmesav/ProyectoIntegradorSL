@@ -1,13 +1,15 @@
 import pyodbc
 from Entidades import Inventario
 from Utilidades import configuracion
+from SeguridadAES import SeguridadAES  
 
 class RepositorioInventario:
+    encriptarAES = SeguridadAES()  
 
-    def ListarInventario(self) -> None:
+    def ListarInventario(self) -> list:
         try:
             conexion = pyodbc.connect(configuracion.Configuracion.strConnection)
-            consulta = """SELECT * FROM Inventario"""
+            consulta = """SELECT ID, IDProducto, CantidadDisponible FROM Inventario"""
             cursor = conexion.cursor()
             cursor.execute(consulta)
 
@@ -16,28 +18,34 @@ class RepositorioInventario:
                 entidad = Inventario.Inventario()
                 entidad.SetId(elemento[0])
                 entidad.SetIdProducto(elemento[1])
-                entidad.SetCantidadDisponible(elemento[2])
+
+                cantidad_descifrada = int(self.encriptarAES.descifrar(elemento[2])) if elemento[2] else 0
+                entidad.SetCantidadDisponible(cantidad_descifrada)
+
                 lista.append(entidad)
 
             cursor.close()
             conexion.close()
-
-            for inventario in lista:
-                print(f"{inventario.GetId()}, {inventario.GetIdProducto()}, {inventario.GetCantidadDisponible()}")
+            return lista
 
         except Exception as ex:
-            print(str(ex))
+            print(f"Error al listar inventario: {ex}")
+            return []
 
-    def ActualizarInventario(self, id_producto: int, cantidad_disponible: int) -> None:
+    def ActualizarInventario(self, id_producto: int, cantidad_disponible: int) -> bool:
         try:
             conexion = pyodbc.connect(configuracion.Configuracion.strConnection)
             cursor = conexion.cursor()
 
+            cantidad_cifrada = self.encriptarAES.cifrar(str(cantidad_disponible))
+
             consulta = """UPDATE Inventario SET CantidadDisponible = ? WHERE IDProducto = ?"""
-            cursor.execute(consulta, (cantidad_disponible, id_producto))
+            cursor.execute(consulta, (cantidad_cifrada, id_producto))
             conexion.commit()
 
             cursor.close()
             conexion.close()
+            return True
         except Exception as ex:
-            print(str(ex))
+            print(f"Error al actualizar inventario: {ex}")
+            return False
