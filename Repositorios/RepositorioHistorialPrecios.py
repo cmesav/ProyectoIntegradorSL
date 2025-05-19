@@ -1,10 +1,10 @@
 import pyodbc
 from Entidades import HistorialPrecio
 from Utilidades import configuracion
-from SeguridadAES import SeguridadAES  
+from Utilidades import SeguridadAES  
 
 class RepositorioHistorialPrecios:
-    encriptarAES = SeguridadAES()  
+    encriptarAES = SeguridadAES.SeguridadAES()  
 
     def ListarHistorialPrecios(self) -> list:
         try:

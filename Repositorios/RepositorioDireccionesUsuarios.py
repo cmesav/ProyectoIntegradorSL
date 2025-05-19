@@ -1,10 +1,10 @@
 import pyodbc
 from Entidades import DireccionUsuario
 from Utilidades import configuracion
-from SeguridadAES import SeguridadAES  
+from Utilidades import SeguridadAES  
 
 class RepositorioDireccionesUsuarios:
-    encriptarAES = SeguridadAES()  
+    encriptarAES = SeguridadAES.SeguridadAES()  
 
     def ListarDireccionesUsuarios(self) -> list:
         try:

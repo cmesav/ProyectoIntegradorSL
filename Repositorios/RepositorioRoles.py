@@ -1,10 +1,10 @@
 import pyodbc
 from Entidades import Rol
 from Utilidades import configuracion
-from SeguridadAES import SeguridadAES  
+from Utilidades import SeguridadAES
 
 class RepositorioRoles:
-    encriptarAES = SeguridadAES()  
+    encriptarAES = SeguridadAES.SeguridadAES()  
 
     def ListarRoles(self) -> list:
         try:

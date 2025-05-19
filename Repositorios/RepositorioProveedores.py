@@ -1,10 +1,10 @@
 import pyodbc
 from Entidades import Proveedor
 from Utilidades import configuracion
-from SeguridadAES import SeguridadAES  
+from Utilidades import SeguridadAES  
 
 class RepositorioProveedores:
-    encriptarAES = SeguridadAES()  
+    encriptarAES = SeguridadAES.SeguridadAES()  
 
     def ListarProveedores(self) -> list:
         try:

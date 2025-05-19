@@ -1,10 +1,10 @@
 import pyodbc
 from Entidades import Categoria
 from Utilidades import configuracion
-from SeguridadAES import SeguridadAES
+from Utilidades import SeguridadAES
 
 class RepositorioCategorias:
-    encriptarAES = SeguridadAES()
+    encriptarAES = SeguridadAES.SeguridadAES()
 
     def ListarCategorias(self) -> list:
         try:

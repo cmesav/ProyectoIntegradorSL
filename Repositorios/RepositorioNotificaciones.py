@@ -1,10 +1,10 @@
 import pyodbc
 from Entidades import Notificacion
 from Utilidades import configuracion
-from SeguridadAES import SeguridadAES  
+from Utilidades import SeguridadAES  
 
 class RepositorioNotificaciones:
-    encriptarAES = SeguridadAES()  
+    encriptarAES = SeguridadAES.SeguridadAES()  
 
     def ListarNotificaciones(self) -> list:
         try:

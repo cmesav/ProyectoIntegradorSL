@@ -1,10 +1,10 @@
 import pyodbc
 from Entidades import Usuario
 from Utilidades import configuracion
-from SeguridadAES import SeguridadAES  
+from Utilidades import SeguridadAES  
 
 class RepositorioUsuarios:
-    encriptarAES = SeguridadAES()  
+    encriptarAES = SeguridadAES.SeguridadAES()  
 
     def ListarUsuarios(self) -> list:
         try:

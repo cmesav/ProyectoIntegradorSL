@@ -1,10 +1,10 @@
 import pyodbc
 from Entidades import Transaccion
 from Utilidades import configuracion
-from SeguridadAES import SeguridadAES  
+from Utilidades import SeguridadAES  
 
 class RepositorioTransacciones:
-    encriptarAES = SeguridadAES()  
+    encriptarAES = SeguridadAES.SeguridadAES()  
 
     def ListarTransacciones(self) -> list:
         try:

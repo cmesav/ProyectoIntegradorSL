@@ -1,10 +1,10 @@
 import pyodbc
 from Entidades import MetodoPago
 from Utilidades import configuracion
-from SeguridadAES import SeguridadAES  
+from Utilidades import SeguridadAES  
 
 class RepositorioMetodosPago:
-    encriptarAES = SeguridadAES()  
+    encriptarAES = SeguridadAES.SeguridadAES()  
 
     def ListarMetodosPago(self) -> list:
         try:

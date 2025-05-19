@@ -1,10 +1,10 @@
 import pyodbc
 from Entidades import Devolucion
 from Utilidades import configuracion
-from SeguridadAES import SeguridadAES  
+from Utilidades import SeguridadAES  
 
 class RepositorioDevoluciones:
-    encriptarAES = SeguridadAES()  
+    encriptarAES = SeguridadAES.SeguridadAES()  
 
     def ListarDevoluciones(self) -> list:
         try:
