@@ -1,43 +1,60 @@
 import pyodbc
-from Entidades import DireccionUsuario
-from Utilidades import configuracion
-from Utilidades import SeguridadAES  
+from Entidades.DireccionUsuario import DireccionUsuario
+from Utilidades.configuracion import Configuracion  
+from Utilidades.SeguridadAES import SeguridadAES  
 
 class RepositorioDireccionesUsuarios:
-    encriptarAES = SeguridadAES.SeguridadAES()  
 
-    def ListarDireccionesUsuarios(self) -> list:
+    encriptarAES = SeguridadAES()
+
+    @staticmethod
+    def obtener_conexion():
         try:
-            conexion = pyodbc.connect(configuracion.Configuracion.strConnection)
-            consulta = """SELECT ID, IDUsuario, Direccion FROM DireccionesUsuarios"""
+            return pyodbc.connect(Configuracion.strConnection)
+        except Exception as ex:
+            return {"Error": f"Fallo en la conexión: {ex}"}
+
+    @staticmethod
+    def listar_direcciones_usuarios():
+        try:
+            conexion = RepositorioDireccionesUsuarios.obtener_conexion()
+            if isinstance(conexion, dict):
+                return conexion
+
+            consulta = """SELECT IDDirecciones, IDUsuario, Direccion FROM DireccionesUsuarios"""
             cursor = conexion.cursor()
             cursor.execute(consulta)
 
-            lista = []
+            direcciones_usuarios = []
             for elemento in cursor:
-                entidad = DireccionUsuario.DireccionUsuario()
-                entidad.SetId(elemento[0])
-                entidad.SetIdUsuario(elemento[1])
+                try:
+                    direccion_descifrada = RepositorioDireccionesUsuarios.encriptarAES.descifrar(elemento[2]) if elemento[2] else "Sin datos"
+                except Exception as ex:
+                    direccion_descifrada = f"Error al descifrar: {ex}"
 
-                direccion_descifrada = self.encriptarAES.descifrar(elemento[2]) if elemento[2] else "Sin datos"
-                entidad.SetDireccion(direccion_descifrada)
-
-                lista.append(entidad)
+                direcciones_usuarios.append({
+                    "IDDirecciones": elemento[0],
+                    "IDUsuario": elemento[1],
+                    "Direccion": direccion_descifrada
+                })
 
             cursor.close()
             conexion.close()
-            return lista
+            return direcciones_usuarios
 
         except Exception as ex:
-            print(f"Error al listar direcciones: {ex}")
-            return []
+            return {"Error": f"Error al listar direcciones de usuario: {ex}"}
 
-    def InsertarDireccionUsuario(self, id_usuario: int, direccion: str) -> bool:
+    @staticmethod
+    def insertar_direccion_usuario(id_usuario: int, direccion: str):
         try:
-            conexion = pyodbc.connect(configuracion.Configuracion.strConnection)
+            conexion = RepositorioDireccionesUsuarios.obtener_conexion()
+            if isinstance(conexion, dict):
+                return conexion
+
             cursor = conexion.cursor()
 
-            direccion_cifrada = self.encriptarAES.cifrar(direccion)
+            direccion_cifrada = RepositorioDireccionesUsuarios.encriptarAES.cifrar(direccion)
 
             consulta = """INSERT INTO DireccionesUsuarios (IDUsuario, Direccion) VALUES (?, ?)"""
             cursor.execute(consulta, (id_usuario, direccion_cifrada))
@@ -45,6 +62,6 @@ class RepositorioDireccionesUsuarios:
 
             cursor.close()
             conexion.close()
-            return True
+            return {"Mensaje": "Dirección de usuario insertada correctamente"}
         except Exception as ex:
-            print(f"Error al insertar dirección: {ex}")
+            return {"Error": f"Error al insertar dirección de usuario: {ex}"}

@@ -1,43 +1,60 @@
 import pyodbc
-from Entidades import Inventario
-from Utilidades import configuracion
-from Utilidades import SeguridadAES  
+from Entidades.Inventario import Inventario
+from Utilidades.configuracion import Configuracion  
+from Utilidades.SeguridadAES import SeguridadAES  
 
 class RepositorioInventario:
-    encriptarAES = SeguridadAES.SeguridadAES()  
 
-    def ListarInventario(self) -> list:
+    encriptarAES = SeguridadAES()
+
+    @staticmethod
+    def obtener_conexion():
         try:
-            conexion = pyodbc.connect(configuracion.Configuracion.strConnection)
-            consulta = """SELECT ID, IDProducto, CantidadDisponible FROM Inventario"""
+            return pyodbc.connect(Configuracion.strConnection)
+        except Exception as ex:
+            return {"Error": f"Fallo en la conexión: {ex}"}
+
+    @staticmethod
+    def listar_inventario():
+        try:
+            conexion = RepositorioInventario.obtener_conexion()
+            if isinstance(conexion, dict):
+                return conexion
+
+            consulta = """SELECT IDInventario, IDProducto, CantidadDisponible FROM Inventario"""
             cursor = conexion.cursor()
             cursor.execute(consulta)
 
-            lista = []
+            inventario = []
             for elemento in cursor:
-                entidad = Inventario.Inventario()
-                entidad.SetId(elemento[0])
-                entidad.SetIdProducto(elemento[1])
+                try:
+                    cantidad_descifrada = int(RepositorioInventario.encriptarAES.descifrar(elemento[2])) if elemento[2] else 0
+                except Exception as ex:
+                    cantidad_descifrada = f"Error al descifrar: {ex}"
 
-                cantidad_descifrada = int(self.encriptarAES.descifrar(elemento[2])) if elemento[2] else 0
-                entidad.SetCantidadDisponible(cantidad_descifrada)
-
-                lista.append(entidad)
+                inventario.append({
+                    "IDInventario": elemento[0],
+                    "IDProducto": elemento[1],
+                    "CantidadDisponible": cantidad_descifrada
+                })
 
             cursor.close()
             conexion.close()
-            return lista
+            return inventario
 
         except Exception as ex:
-            print(f"Error al listar inventario: {ex}")
-            return []
+            return {"Error": f"Error al listar inventario: {ex}"}
 
-    def ActualizarInventario(self, id_producto: int, cantidad_disponible: int) -> bool:
+    @staticmethod
+    def actualizar_inventario(id_producto: int, cantidad_disponible: int):
         try:
-            conexion = pyodbc.connect(configuracion.Configuracion.strConnection)
+            conexion = RepositorioInventario.obtener_conexion()
+            if isinstance(conexion, dict):
+                return conexion
+
             cursor = conexion.cursor()
 
-            cantidad_cifrada = self.encriptarAES.cifrar(str(cantidad_disponible))
+            cantidad_cifrada = RepositorioInventario.encriptarAES.cifrar(str(cantidad_disponible))
 
             consulta = """UPDATE Inventario SET CantidadDisponible = ? WHERE IDProducto = ?"""
             cursor.execute(consulta, (cantidad_cifrada, id_producto))
@@ -45,7 +62,6 @@ class RepositorioInventario:
 
             cursor.close()
             conexion.close()
-            return True
+            return {"Mensaje": "Inventario actualizado correctamente"}
         except Exception as ex:
-            print(f"Error al actualizar inventario: {ex}")
-            return False
+            return {"Error": f"Error al actualizar inventario: {ex}"}

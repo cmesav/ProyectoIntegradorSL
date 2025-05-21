@@ -1,63 +1,92 @@
 import pyodbc
-from Entidades import Producto
-from Utilidades import configuracion
-from Utilidades import SeguridadAES  
+from Entidades.Producto import Producto
+from Utilidades.configuracion import Configuracion  
+from Utilidades.SeguridadAES import SeguridadAES  
 
 class RepositorioProductos:
-    encriptarAES = SeguridadAES.SeguridadAES()  
 
-    def ListarProductos(self) -> list:
+    encriptarAES = SeguridadAES()
+
+    @staticmethod
+    def obtener_conexion():
         try:
-            conexion = pyodbc.connect(configuracion.Configuracion.strConnection)
-            consulta = """SELECT ID, NombreProducto, IDCategoria, Precio FROM Productos"""
+            return pyodbc.connect(Configuracion.strConnection)
+        except Exception as ex:
+            return {"Error": f"Fallo en la conexión: {ex}"}
+
+    @staticmethod
+    def listar_productos():
+        try:
+            conexion = RepositorioProductos.obtener_conexion()
+            if isinstance(conexion, dict):
+                return conexion
+
+            consulta = """SELECT IDProducto, NombreProducto, IDCategoria, Precio FROM Productos"""
             cursor = conexion.cursor()
             cursor.execute(consulta)
 
-            lista = []
+            productos = []
             for elemento in cursor:
-                entidad = Producto.Producto()
-                entidad.SetId(elemento[0])
+                try:
+                    nombre_descifrado = RepositorioProductos.encriptarAES.descifrar(elemento[1]) if elemento[1] else "Sin datos"
+                    precio_descifrado = float(RepositorioProductos.encriptarAES.descifrar(elemento[3])) if elemento[3] else 0.0
+                except Exception as ex:
+                    nombre_descifrado = f"Error al descifrar: {ex}"
+                    precio_descifrado = f"Error al descifrar: {ex}"
 
-                nombre_descifrado = self.encriptarAES.descifrar(elemento[1]) if elemento[1] else "Sin datos"
-                precio_descifrado = float(self.encriptarAES.descifrar(elemento[3])) if elemento[3] else 0.0
-
-                entidad.SetNombreProducto(nombre_descifrado)
-                entidad.SetIdCategoria(elemento[2])
-                entidad.SetPrecio(precio_descifrado)
-
-                lista.append(entidad)
+                productos.append({
+                    "IDProducto": elemento[0],
+                    "NombreProducto": nombre_descifrado,
+                    "IDCategoria": elemento[2],
+                    "Precio": precio_descifrado
+                })
 
             cursor.close()
             conexion.close()
-            return lista
+            return productos
 
         except Exception as ex:
-            print(f"Error al listar productos: {ex}")
-            return []
+            return {"Error": f"Error al listar productos: {ex}"}
 
-    def ListarProductosConCategoria(self) -> None:
+    @staticmethod
+    def listar_productos_con_categoria():
         try:
-            conexion = pyodbc.connect(configuracion.Configuracion.strConnection)
+            conexion = RepositorioProductos.obtener_conexion()
+            if isinstance(conexion, dict):
+                return conexion
+
             consulta = """SELECT p.IDProducto, p.NombreProducto, c.NombreCategoria, p.Precio 
                           FROM Productos p INNER JOIN Categorias c ON p.IDCategoria = c.IDCategoria"""
             cursor = conexion.cursor()
             cursor.execute(consulta)
 
+            productos_categoria = []
             for elemento in cursor:
-                print(elemento)
+                productos_categoria.append({
+                    "IDProducto": elemento[0],
+                    "NombreProducto": elemento[1],
+                    "NombreCategoria": elemento[2],
+                    "Precio": elemento[3]
+                })
 
             cursor.close()
             conexion.close()
-        except Exception as ex:
-            print(f"Error al listar productos con categoría: {ex}")
+            return productos_categoria
 
-    def InsertarProducto(self, nombre: str, id_categoria: int, precio: float) -> bool:
+        except Exception as ex:
+            return {"Error": f"Error al listar productos con categoría: {ex}"}
+
+    @staticmethod
+    def insertar_producto(nombre: str, id_categoria: int, precio: float):
         try:
-            conexion = pyodbc.connect(configuracion.Configuracion.strConnection)
+            conexion = RepositorioProductos.obtener_conexion()
+            if isinstance(conexion, dict):
+                return conexion
+
             cursor = conexion.cursor()
 
-            nombre_cifrado = self.encriptarAES.cifrar(nombre)
-            precio_cifrado = self.encriptarAES.cifrar(str(precio))
+            nombre_cifrado = RepositorioProductos.encriptarAES.cifrar(nombre)
+            precio_cifrado = RepositorioProductos.encriptarAES.cifrar(str(precio))
 
             consulta = """INSERT INTO Productos (NombreProducto, IDCategoria, Precio) VALUES (?, ?, ?)"""
             cursor.execute(consulta, (nombre_cifrado, id_categoria, precio_cifrado))
@@ -65,7 +94,6 @@ class RepositorioProductos:
 
             cursor.close()
             conexion.close()
-            return True
+            return {"Mensaje": "Producto insertado correctamente"}
         except Exception as ex:
-            print(f"Error al insertar producto: {ex}")
-            return False
+            return {"Error": f"Error al insertar producto: {ex}"}

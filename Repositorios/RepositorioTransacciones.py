@@ -1,47 +1,62 @@
 import pyodbc
-from Entidades import Transaccion
-from Utilidades import configuracion
-from Utilidades import SeguridadAES  
+from Entidades.Transaccion import Transaccion
+from Utilidades.configuracion import Configuracion  
+from Utilidades.SeguridadAES import SeguridadAES  
 
 class RepositorioTransacciones:
-    encriptarAES = SeguridadAES.SeguridadAES()  
 
-    def ListarTransacciones(self) -> list:
+    encriptarAES = SeguridadAES()
+
+    @staticmethod
+    def obtener_conexion():
         try:
-            conexion = pyodbc.connect(configuracion.Configuracion.strConnection)
-            consulta = """SELECT ID, IDUsuario, Fecha, IDMetodoPago, IDEstadoTransaccion FROM Transacciones"""
+            return pyodbc.connect(Configuracion.strConnection)
+        except Exception as ex:
+            return {"Error": f"Fallo en la conexión: {ex}"}
+
+    @staticmethod
+    def listar_transacciones():
+        try:
+            conexion = RepositorioTransacciones.obtener_conexion()
+            if isinstance(conexion, dict):
+                return conexion
+
+            consulta = """SELECT IDTransaccion, IDUsuario, Fecha, IDMetodoPago, IDEstadoTransaccion FROM Transacciones"""
             cursor = conexion.cursor()
             cursor.execute(consulta)
 
-            lista = []
+            transacciones = []
             for elemento in cursor:
-                entidad = Transaccion.Transaccion()
-                entidad.SetId(elemento[0])
-                entidad.SetIdUsuario(elemento[1])
+                try:
+                    fecha_descifrada = RepositorioTransacciones.encriptarAES.descifrar(elemento[2]) if elemento[2] else "Sin datos"
+                except Exception as ex:
+                    fecha_descifrada = f"Error al descifrar: {ex}"
 
-                fecha_descifrada = self.encriptarAES.descifrar(elemento[2]) if elemento[2] else "Sin datos"
-                entidad.SetFecha(fecha_descifrada)
-
-                entidad.SetIdMetodoPago(elemento[3])
-                entidad.SetIdEstadoTransaccion(elemento[4])
-
-                lista.append(entidad)
+                transacciones.append({
+                    "IDTransaccion": elemento[0],
+                    "IDUsuario": elemento[1],
+                    "Fecha": fecha_descifrada,
+                    "IDMetodoPago": elemento[3],
+                    "IDEstadoTransaccion": elemento[4]
+                })
 
             cursor.close()
             conexion.close()
-            return lista
+            return transacciones
 
         except Exception as ex:
-            print(f"Error al listar transacciones: {ex}")
-            return []
+            return {"Error": f"Error al listar transacciones: {ex}"}
 
-    def InsertarTransaccion(self, id_usuario: int, fecha: str, id_metodo_pago: int, id_estado_transaccion: int) -> bool:
-       
+    @staticmethod
+    def insertar_transaccion(id_usuario: int, fecha: str, id_metodo_pago: int, id_estado_transaccion: int):
         try:
-            conexion = pyodbc.connect(configuracion.Configuracion.strConnection)
+            conexion = RepositorioTransacciones.obtener_conexion()
+            if isinstance(conexion, dict):
+                return conexion
+
             cursor = conexion.cursor()
 
-            fecha_cifrada = self.encriptarAES.cifrar(fecha)
+            fecha_cifrada = RepositorioTransacciones.encriptarAES.cifrar(fecha)
 
             consulta = """INSERT INTO Transacciones (IDUsuario, Fecha, IDMetodoPago, IDEstadoTransaccion) 
                           VALUES (?, ?, ?, ?)"""
@@ -50,7 +65,6 @@ class RepositorioTransacciones:
 
             cursor.close()
             conexion.close()
-            return True
+            return {"Mensaje": "Transacción insertada correctamente"}
         except Exception as ex:
-            print(f"Error al insertar transacción: {ex}")
-            return False
+            return {"Error": f"Error al insertar transacción: {ex}"}

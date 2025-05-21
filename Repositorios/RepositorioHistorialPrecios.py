@@ -1,50 +1,68 @@
 import pyodbc
-from Entidades import HistorialPrecio
-from Utilidades import configuracion
-from Utilidades import SeguridadAES  
+from Entidades.HistorialPrecio import HistorialPrecio
+from Utilidades.configuracion import Configuracion  
+from Utilidades.SeguridadAES import SeguridadAES  
 
 class RepositorioHistorialPrecios:
-    encriptarAES = SeguridadAES.SeguridadAES()  
 
-    def ListarHistorialPrecios(self) -> list:
+    encriptarAES = SeguridadAES()
+
+    @staticmethod
+    def obtener_conexion():
         try:
-            conexion = pyodbc.connect(configuracion.Configuracion.strConnection)
-            consulta = """SELECT ID, IDProducto, Fecha, PrecioAntiguo, PrecioNuevo FROM HistorialPrecios"""
+            return pyodbc.connect(Configuracion.strConnection)
+        except Exception as ex:
+            return {"Error": f"Fallo en la conexión: {ex}"}
+
+    @staticmethod
+    def listar_historial_precios():
+        try:
+            conexion = RepositorioHistorialPrecios.obtener_conexion()
+            if isinstance(conexion, dict):
+                return conexion
+
+            consulta = """SELECT IDHistorial, IDProducto, Fecha, PrecioAntiguo, PrecioNuevo FROM HistorialPrecios"""
             cursor = conexion.cursor()
             cursor.execute(consulta)
 
-            lista = []
+            historial_precios = []
             for elemento in cursor:
-                entidad = HistorialPrecio.HistorialPrecio()
-                entidad.SetId(elemento[0])
-                entidad.SetIdProducto(elemento[1])
+                try:
+                    fecha_descifrada = RepositorioHistorialPrecios.encriptarAES.descifrar(elemento[2]) if elemento[2] else "Sin datos"
+                    precio_antiguo_descifrado = float(RepositorioHistorialPrecios.encriptarAES.descifrar(elemento[3])) if elemento[3] else 0.0
+                    precio_nuevo_descifrado = float(RepositorioHistorialPrecios.encriptarAES.descifrar(elemento[4])) if elemento[4] else 0.0
+                except Exception as ex:
+                    fecha_descifrada = f"Error al descifrar: {ex}"
+                    precio_antiguo_descifrado = f"Error al descifrar: {ex}"
+                    precio_nuevo_descifrado = f"Error al descifrar: {ex}"
 
-                fecha_descifrada = self.encriptarAES.descifrar(elemento[2]) if elemento[2] else "Sin datos"
-                precio_antiguo_descifrado = float(self.encriptarAES.descifrar(elemento[3])) if elemento[3] else 0.0
-                precio_nuevo_descifrado = float(self.encriptarAES.descifrar(elemento[4])) if elemento[4] else 0.0
-
-                entidad.SetFecha(fecha_descifrada)
-                entidad.SetPrecioAntiguo(precio_antiguo_descifrado)
-                entidad.SetPrecioNuevo(precio_nuevo_descifrado)
-
-                lista.append(entidad)
+                historial_precios.append({
+                    "IDHistorial": elemento[0],
+                    "IDProducto": elemento[1],
+                    "Fecha": fecha_descifrada,
+                    "PrecioAntiguo": precio_antiguo_descifrado,
+                    "PrecioNuevo": precio_nuevo_descifrado
+                })
 
             cursor.close()
             conexion.close()
-            return lista
+            return historial_precios
 
         except Exception as ex:
-            print(f"Error al listar historial de precios: {ex}")
-            return []
+            return {"Error": f"Error al listar historial de precios: {ex}"}
 
-    def InsertarHistorialPrecio(self, id_producto: int, fecha: str, precio_antiguo: float, precio_nuevo: float) -> bool:
+    @staticmethod
+    def insertar_historial_precio(id_producto: int, fecha: str, precio_antiguo: float, precio_nuevo: float):
         try:
-            conexion = pyodbc.connect(configuracion.Configuracion.strConnection)
+            conexion = RepositorioHistorialPrecios.obtener_conexion()
+            if isinstance(conexion, dict):
+                return conexion
+
             cursor = conexion.cursor()
 
-            fecha_cifrada = self.encriptarAES.cifrar(fecha)
-            precio_antiguo_cifrado = self.encriptarAES.cifrar(str(precio_antiguo))
-            precio_nuevo_cifrado = self.encriptarAES.cifrar(str(precio_nuevo))
+            fecha_cifrada = RepositorioHistorialPrecios.encriptarAES.cifrar(fecha)
+            precio_antiguo_cifrado = RepositorioHistorialPrecios.encriptarAES.cifrar(str(precio_antiguo))
+            precio_nuevo_cifrado = RepositorioHistorialPrecios.encriptarAES.cifrar(str(precio_nuevo))
 
             consulta = """INSERT INTO HistorialPrecios (IDProducto, Fecha, PrecioAntiguo, PrecioNuevo) VALUES (?, ?, ?, ?)"""
             cursor.execute(consulta, (id_producto, fecha_cifrada, precio_antiguo_cifrado, precio_nuevo_cifrado))
@@ -52,7 +70,6 @@ class RepositorioHistorialPrecios:
 
             cursor.close()
             conexion.close()
-            return True
+            return {"Mensaje": "Historial de precios insertado correctamente"}
         except Exception as ex:
-            print(f"Error al insertar historial de precios: {ex}")
-            return False
+            return {"Error": f"Error al insertar historial de precios: {ex}"}

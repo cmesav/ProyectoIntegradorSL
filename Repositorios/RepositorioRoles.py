@@ -1,42 +1,59 @@
 import pyodbc
-from Entidades import Rol
-from Utilidades import configuracion
-from Utilidades import SeguridadAES
+from Entidades.Rol import Rol
+from Utilidades.configuracion import Configuracion  
+from Utilidades.SeguridadAES import SeguridadAES  
 
 class RepositorioRoles:
-    encriptarAES = SeguridadAES.SeguridadAES()  
 
-    def ListarRoles(self) -> list:
+    encriptarAES = SeguridadAES()
+
+    @staticmethod
+    def obtener_conexion():
         try:
-            conexion = pyodbc.connect(configuracion.Configuracion.strConnection)
-            consulta = """SELECT ID, NombreRol FROM Roles"""
+            return pyodbc.connect(Configuracion.strConnection)
+        except Exception as ex:
+            return {"Error": f"Fallo en la conexión: {ex}"}
+
+    @staticmethod
+    def listar_roles():
+        try:
+            conexion = RepositorioRoles.obtener_conexion()
+            if isinstance(conexion, dict):
+                return conexion
+
+            consulta = """SELECT IDRol, NombreRol FROM Roles"""
             cursor = conexion.cursor()
             cursor.execute(consulta)
 
-            lista = []
+            roles = []
             for elemento in cursor:
-                entidad = Rol.Rol()
-                entidad.SetId(elemento[0])
+                try:
+                    nombre_descifrado = RepositorioRoles.encriptarAES.descifrar(elemento[1]) if elemento[1] else "Sin datos"
+                except Exception as ex:
+                    nombre_descifrado = f"Error al descifrar: {ex}"
 
-                nombre_descifrado = self.encriptarAES.descifrar(elemento[1]) if elemento[1] else "Sin datos"
-                entidad.SetNombreRol(nombre_descifrado)
-
-                lista.append(entidad)
+                roles.append({
+                    "IDRol": elemento[0],
+                    "NombreRol": nombre_descifrado
+                })
 
             cursor.close()
             conexion.close()
-            return lista
+            return roles
 
         except Exception as ex:
-            print(f"Error al listar roles: {ex}")
-            return []
+            return {"Error": f"Error al listar roles: {ex}"}
 
-    def InsertarRol(self, nombre_rol: str) -> bool:
+    @staticmethod
+    def insertar_rol(nombre_rol: str):
         try:
-            conexion = pyodbc.connect(configuracion.Configuracion.strConnection)
+            conexion = RepositorioRoles.obtener_conexion()
+            if isinstance(conexion, dict):
+                return conexion
+
             cursor = conexion.cursor()
 
-            nombre_cifrado = self.encriptarAES.cifrar(nombre_rol)
+            nombre_cifrado = RepositorioRoles.encriptarAES.cifrar(nombre_rol)
 
             consulta = """INSERT INTO Roles (NombreRol) VALUES (?)"""
             cursor.execute(consulta, (nombre_cifrado,))
@@ -44,7 +61,6 @@ class RepositorioRoles:
 
             cursor.close()
             conexion.close()
-            return True
+            return {"Mensaje": "Rol insertado correctamente"}
         except Exception as ex:
-            print(f"Error al insertar rol: {ex}")
-            return False
+            return {"Error": f"Error al insertar rol: {ex}"}

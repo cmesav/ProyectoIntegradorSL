@@ -1,43 +1,59 @@
 import pyodbc
-from Entidades import Categoria
-from Utilidades import configuracion
-from Utilidades import SeguridadAES
+from Entidades.Categoria import Categoria
+from Utilidades.configuracion import Configuracion  
+from Utilidades.SeguridadAES import SeguridadAES  
 
 class RepositorioCategorias:
-    encriptarAES = SeguridadAES.SeguridadAES()
 
-    def ListarCategorias(self) -> list:
+    encriptarAES = SeguridadAES()
+
+    @staticmethod
+    def obtener_conexion():
         try:
-            conexion = pyodbc.connect(configuracion.Configuracion.strConnection)
-            consulta = """SELECT ID, NombreCategoria FROM Categorias"""
+            return pyodbc.connect(Configuracion.strConnection)
+        except Exception as ex:
+            return {"Error": f"Fallo en la conexión: {ex}"}
+
+    @staticmethod
+    def listar_categorias():
+        try:
+            conexion = RepositorioCategorias.obtener_conexion()
+            if isinstance(conexion, dict):
+                return conexion
+
+            consulta = """SELECT IDCategoria, NombreCategoria FROM Categorias"""
             cursor = conexion.cursor()
             cursor.execute(consulta)
 
-            lista = []
+            categorias = []
             for elemento in cursor:
-                entidad = Categoria.Categoria()
-                entidad.SetId(elemento[0])
+                try:
+                    nombre_descifrado = RepositorioCategorias.encriptarAES.descifrar(elemento[1]) if elemento[1] else "Sin datos"
+                except Exception as ex:
+                    nombre_descifrado = f"Error al descifrar: {ex}"
 
-                nombre_descifrado = self.encriptarAES.descifrar(elemento[1]) if elemento[1] else "Sin datos"
-                entidad.SetNombreCategoria(nombre_descifrado)
-
-                lista.append(entidad)
+                categorias.append({
+                    "IDCategoria": elemento[0],
+                    "NombreCategoria": nombre_descifrado
+                })
 
             cursor.close()
             conexion.close()
-            return lista
+            return categorias
 
         except Exception as ex:
-            print(f"Error al listar categorías: {ex}")
-            return []
+            return {"Error": f"Error al listar categorías: {ex}"}
 
-    def InsertarCategoria(self, nombre_categoria: str) -> bool:
+    @staticmethod
+    def insertar_categoria(nombre_categoria: str):
         try:
-            conexion = pyodbc.connect(configuracion.Configuracion.strConnection)
+            conexion = RepositorioCategorias.obtener_conexion()
+            if isinstance(conexion, dict):
+                return conexion
+
             cursor = conexion.cursor()
 
-            # Cifrar el nombre de la categoría antes de insertarla en la base de datos
-            nombre_cifrado = self.encriptarAES.cifrar(nombre_categoria)
+            nombre_cifrado = RepositorioCategorias.encriptarAES.cifrar(nombre_categoria)
 
             consulta = """INSERT INTO Categorias (NombreCategoria) VALUES (?)"""
             cursor.execute(consulta, (nombre_cifrado,))
@@ -45,7 +61,6 @@ class RepositorioCategorias:
 
             cursor.close()
             conexion.close()
-            return True
+            return {"Mensaje": "Categoría insertada correctamente"}
         except Exception as ex:
-            print(f"Error al insertar categoría: {ex}")
-            return False
+            return {"Error": f"Error al insertar categoría: {ex}"}

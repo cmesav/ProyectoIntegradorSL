@@ -1,47 +1,63 @@
 import pyodbc
-from Entidades import Proveedor
-from Utilidades import configuracion
-from Utilidades import SeguridadAES  
+from Entidades.Proveedor import Proveedor
+from Utilidades.configuracion import Configuracion  
+from Utilidades.SeguridadAES import SeguridadAES  
 
 class RepositorioProveedores:
-    encriptarAES = SeguridadAES.SeguridadAES()  
 
-    def ListarProveedores(self) -> list:
+    encriptarAES = SeguridadAES()
+
+    @staticmethod
+    def obtener_conexion():
         try:
-            conexion = pyodbc.connect(configuracion.Configuracion.strConnection)
-            consulta = """SELECT ID, NombreProveedor, Contacto FROM Proveedores"""
+            return pyodbc.connect(Configuracion.strConnection)
+        except Exception as ex:
+            return {"Error": f"Fallo en la conexión: {ex}"}
+
+    @staticmethod
+    def listar_proveedores():
+        try:
+            conexion = RepositorioProveedores.obtener_conexion()
+            if isinstance(conexion, dict):
+                return conexion
+
+            consulta = """SELECT IDProveedor, NombreProveedor, Contacto FROM Proveedores"""
             cursor = conexion.cursor()
             cursor.execute(consulta)
 
-            lista = []
+            proveedores = []
             for elemento in cursor:
-                entidad = Proveedor.Proveedor()
-                entidad.SetId(elemento[0])
+                try:
+                    nombre_descifrado = RepositorioProveedores.encriptarAES.descifrar(elemento[1]) if elemento[1] else "Sin datos"
+                    contacto_descifrado = RepositorioProveedores.encriptarAES.descifrar(elemento[2]) if elemento[2] else "Sin datos"
+                except Exception as ex:
+                    nombre_descifrado = f"Error al descifrar: {ex}"
+                    contacto_descifrado = f"Error al descifrar: {ex}"
 
-                nombre_descifrado = self.encriptarAES.descifrar(elemento[1]) if elemento[1] else "Sin datos"
-                contacto_descifrado = self.encriptarAES.descifrar(elemento[2]) if elemento[2] else "Sin datos"
-
-                entidad.SetNombreProveedor(nombre_descifrado)
-                entidad.SetContacto(contacto_descifrado)
-
-                lista.append(entidad)
+                proveedores.append({
+                    "IDProveedor": elemento[0],
+                    "NombreProveedor": nombre_descifrado,
+                    "Contacto": contacto_descifrado
+                })
 
             cursor.close()
             conexion.close()
-            return lista
+            return proveedores
 
         except Exception as ex:
-            print(f"Error al listar proveedores: {ex}")
-            return []
+            return {"Error": f"Error al listar proveedores: {ex}"}
 
-    def InsertarProveedor(self, nombre_proveedor: str, contacto: str) -> bool:
-        """Cifra y almacena un nuevo proveedor en la base de datos"""
+    @staticmethod
+    def insertar_proveedor(nombre_proveedor: str, contacto: str):
         try:
-            conexion = pyodbc.connect(configuracion.Configuracion.strConnection)
+            conexion = RepositorioProveedores.obtener_conexion()
+            if isinstance(conexion, dict):
+                return conexion
+
             cursor = conexion.cursor()
 
-            nombre_cifrado = self.encriptarAES.cifrar(nombre_proveedor)
-            contacto_cifrado = self.encriptarAES.cifrar(contacto)
+            nombre_cifrado = RepositorioProveedores.encriptarAES.cifrar(nombre_proveedor)
+            contacto_cifrado = RepositorioProveedores.encriptarAES.cifrar(contacto)
 
             consulta = """INSERT INTO Proveedores (NombreProveedor, Contacto) VALUES (?, ?)"""
             cursor.execute(consulta, (nombre_cifrado, contacto_cifrado))
@@ -49,7 +65,6 @@ class RepositorioProveedores:
 
             cursor.close()
             conexion.close()
-            return True
+            return {"Mensaje": "Proveedor insertado correctamente"}
         except Exception as ex:
-            print(f"Error al insertar proveedor: {ex}")
-            return False
+            return {"Error": f"Error al insertar proveedor: {ex}"}
