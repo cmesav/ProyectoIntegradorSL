@@ -20,7 +20,7 @@ class RepositorioDireccionesUsuarios:
             if isinstance(conexion, dict):
                 return conexion
 
-            consulta = """SELECT IDDirecciones, IDUsuario, Direccion FROM DireccionesUsuarios"""
+            consulta = """SELECT IDDireccion, IDUsuario, Direccion FROM DireccionesUsuarios"""
             cursor = conexion.cursor()
             cursor.execute(consulta)
 
