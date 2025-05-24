@@ -4,11 +4,13 @@ from Utilidades.configuracion import Configuracion
 from Utilidades.SeguridadAES import SeguridadAES  
 
 class RepositorioEstadoTransaccion:
+    """Clase para gestionar los estados de transacción con cifrado AES-GCM"""
 
     encriptarAES = SeguridadAES()
 
     @staticmethod
     def obtener_conexion():
+        """Obtiene una conexión segura a la base de datos"""
         try:
             return pyodbc.connect(Configuracion.strConnection)
         except Exception as ex:
@@ -16,6 +18,7 @@ class RepositorioEstadoTransaccion:
 
     @staticmethod
     def listar_estados_transaccion():
+        """Lista los estados de transacción, descifrando los nombres si es posible"""
         try:
             conexion = RepositorioEstadoTransaccion.obtener_conexion()
             if isinstance(conexion, dict):
@@ -46,6 +49,7 @@ class RepositorioEstadoTransaccion:
 
     @staticmethod
     def insertar_estado_transaccion(nombre_estado: str):
+        """Inserta un nuevo estado de transacción cifrando su nombre"""
         try:
             conexion = RepositorioEstadoTransaccion.obtener_conexion()
             if isinstance(conexion, dict):
@@ -64,3 +68,46 @@ class RepositorioEstadoTransaccion:
             return {"Mensaje": "Estado de transacción insertado correctamente"}
         except Exception as ex:
             return {"Error": f"Error al insertar estado de transacción: {ex}"}
+
+    @staticmethod
+    def actualizar_estado_transaccion(id_estado_transaccion: int, nombre_estado: str):
+        """Actualiza un estado de transacción cifrando su nuevo nombre"""
+        try:
+            conexion = RepositorioEstadoTransaccion.obtener_conexion()
+            if isinstance(conexion, dict):
+                return conexion
+
+            cursor = conexion.cursor()
+
+            nombre_cifrado = RepositorioEstadoTransaccion.encriptarAES.cifrar(nombre_estado)
+
+            consulta = """UPDATE EstadoTransaccion SET NombreEstado=? WHERE IDEstadoTransaccion=?"""
+            cursor.execute(consulta, (nombre_cifrado, id_estado_transaccion))
+            conexion.commit()
+
+            cursor.close()
+            conexion.close()
+            return {"Mensaje": "Estado de transacción actualizado correctamente"}
+        except Exception as ex:
+            return {"Error": f"Error al actualizar estado de transacción: {ex}"}
+
+    @staticmethod
+    def eliminar_estado_transaccion(id_estado_transaccion: int):
+        """Elimina un estado de transacción por su ID"""
+        try:
+            conexion = RepositorioEstadoTransaccion.obtener_conexion()
+            if isinstance(conexion, dict):
+                return conexion
+
+            cursor = conexion.cursor()
+
+            consulta = """DELETE FROM EstadoTransaccion WHERE IDEstadoTransaccion=?"""
+            cursor.execute(consulta, (id_estado_transaccion,))
+            conexion.commit()
+
+            cursor.close()
+            conexion.close()
+            return {"Mensaje": "Estado de transacción eliminado correctamente"}
+        except Exception as ex:
+            return {"Error": f"Error al eliminar estado de transacción: {ex}"}
+ 

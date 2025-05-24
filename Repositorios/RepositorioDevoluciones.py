@@ -4,11 +4,13 @@ from Utilidades.configuracion import Configuracion
 from Utilidades.SeguridadAES import SeguridadAES  
 
 class RepositorioDevoluciones:
+    """Clase para gestionar devoluciones con cifrado AES-GCM"""
 
     encriptarAES = SeguridadAES()
 
     @staticmethod
     def obtener_conexion():
+        """Obtiene una conexión segura a la base de datos"""
         try:
             return pyodbc.connect(Configuracion.strConnection)
         except Exception as ex:
@@ -16,6 +18,7 @@ class RepositorioDevoluciones:
 
     @staticmethod
     def listar_devoluciones():
+        """Lista las devoluciones y descifra los datos sensibles si es posible"""
         try:
             conexion = RepositorioDevoluciones.obtener_conexion()
             if isinstance(conexion, dict):
@@ -50,6 +53,7 @@ class RepositorioDevoluciones:
 
     @staticmethod
     def insertar_devolucion(id_transaccion: int, motivo: str, fecha: str):
+        """Inserta una nueva devolución cifrando sus datos"""
         try:
             conexion = RepositorioDevoluciones.obtener_conexion()
             if isinstance(conexion, dict):
@@ -69,3 +73,47 @@ class RepositorioDevoluciones:
             return {"Mensaje": "Devolución insertada correctamente"}
         except Exception as ex:
             return {"Error": f"Error al insertar devolución: {ex}"}
+
+    @staticmethod
+    def actualizar_devolucion(id_devolucion: int, id_transaccion: int, motivo: str, fecha: str):
+        """Actualiza una devolución cifrando sus nuevos datos"""
+        try:
+            conexion = RepositorioDevoluciones.obtener_conexion()
+            if isinstance(conexion, dict):
+                return conexion
+
+            cursor = conexion.cursor()
+
+            motivo_cifrado = RepositorioDevoluciones.encriptarAES.cifrar(motivo)
+            fecha_cifrada = RepositorioDevoluciones.encriptarAES.cifrar(fecha)
+
+            consulta = """UPDATE Devoluciones SET IDTransaccion=?, Motivo=?, Fecha=? WHERE IDDevolucion=?"""
+            cursor.execute(consulta, (id_transaccion, motivo_cifrado, fecha_cifrada, id_devolucion))
+            conexion.commit()
+
+            cursor.close()
+            conexion.close()
+            return {"Mensaje": "Devolución actualizada correctamente"}
+        except Exception as ex:
+            return {"Error": f"Error al actualizar devolución: {ex}"}
+
+    @staticmethod
+    def eliminar_devolucion(id_devolucion: int):
+        """Elimina una devolución por su ID"""
+        try:
+            conexion = RepositorioDevoluciones.obtener_conexion()
+            if isinstance(conexion, dict):
+                return conexion
+
+            cursor = conexion.cursor()
+
+            consulta = """DELETE FROM Devoluciones WHERE IDDevolucion=?"""
+            cursor.execute(consulta, (id_devolucion,))
+            conexion.commit()
+
+            cursor.close()
+            conexion.close()
+            return {"Mensaje": "Devolución eliminada correctamente"}
+        except Exception as ex:
+            return {"Error": f"Error al eliminar devolución: {ex}"}
+ 

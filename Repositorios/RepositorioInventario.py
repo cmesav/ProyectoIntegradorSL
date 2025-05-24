@@ -4,11 +4,13 @@ from Utilidades.configuracion import Configuracion
 from Utilidades.SeguridadAES import SeguridadAES  
 
 class RepositorioInventario:
+    """Clase para gestionar el inventario con cifrado AES-GCM"""
 
     encriptarAES = SeguridadAES()
 
     @staticmethod
     def obtener_conexion():
+        """Obtiene una conexión segura a la base de datos"""
         try:
             return pyodbc.connect(Configuracion.strConnection)
         except Exception as ex:
@@ -16,6 +18,7 @@ class RepositorioInventario:
 
     @staticmethod
     def listar_inventario():
+        """Lista el inventario, descifrando la cantidad disponible si es posible"""
         try:
             conexion = RepositorioInventario.obtener_conexion()
             if isinstance(conexion, dict):
@@ -46,7 +49,30 @@ class RepositorioInventario:
             return {"Error": f"Error al listar inventario: {ex}"}
 
     @staticmethod
+    def insertar_inventario(id_producto: int, cantidad_disponible: int):
+        """Inserta un nuevo registro en el inventario cifrando la cantidad disponible"""
+        try:
+            conexion = RepositorioInventario.obtener_conexion()
+            if isinstance(conexion, dict):
+                return conexion
+
+            cursor = conexion.cursor()
+
+            cantidad_cifrada = RepositorioInventario.encriptarAES.cifrar(str(cantidad_disponible))
+
+            consulta = """INSERT INTO Inventario (IDProducto, CantidadDisponible) VALUES (?, ?)"""
+            cursor.execute(consulta, (id_producto, cantidad_cifrada))
+            conexion.commit()
+
+            cursor.close()
+            conexion.close()
+            return {"Mensaje": "Inventario insertado correctamente"}
+        except Exception as ex:
+            return {"Error": f"Error al insertar inventario: {ex}"}
+
+    @staticmethod
     def actualizar_inventario(id_producto: int, cantidad_disponible: int):
+        """Actualiza la cantidad disponible de un producto en el inventario"""
         try:
             conexion = RepositorioInventario.obtener_conexion()
             if isinstance(conexion, dict):
@@ -65,3 +91,24 @@ class RepositorioInventario:
             return {"Mensaje": "Inventario actualizado correctamente"}
         except Exception as ex:
             return {"Error": f"Error al actualizar inventario: {ex}"}
+
+    @staticmethod
+    def eliminar_inventario(id_producto: int):
+        """Elimina un registro del inventario por su ID de producto"""
+        try:
+            conexion = RepositorioInventario.obtener_conexion()
+            if isinstance(conexion, dict):
+                return conexion
+
+            cursor = conexion.cursor()
+
+            consulta = """DELETE FROM Inventario WHERE IDProducto=?"""
+            cursor.execute(consulta, (id_producto,))
+            conexion.commit()
+
+            cursor.close()
+            conexion.close()
+            return {"Mensaje": "Inventario eliminado correctamente"}
+        except Exception as ex:
+            return {"Error": f"Error al eliminar inventario: {ex}"}
+ 

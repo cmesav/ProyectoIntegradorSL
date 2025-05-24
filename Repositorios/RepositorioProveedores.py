@@ -4,11 +4,13 @@ from Utilidades.configuracion import Configuracion
 from Utilidades.SeguridadAES import SeguridadAES  
 
 class RepositorioProveedores:
+    """Clase para gestionar proveedores con cifrado AES-GCM"""
 
     encriptarAES = SeguridadAES()
 
     @staticmethod
     def obtener_conexion():
+        """Obtiene una conexión segura a la base de datos"""
         try:
             return pyodbc.connect(Configuracion.strConnection)
         except Exception as ex:
@@ -16,6 +18,7 @@ class RepositorioProveedores:
 
     @staticmethod
     def listar_proveedores():
+        """Lista los proveedores, descifrando los datos si es posible"""
         try:
             conexion = RepositorioProveedores.obtener_conexion()
             if isinstance(conexion, dict):
@@ -49,6 +52,7 @@ class RepositorioProveedores:
 
     @staticmethod
     def insertar_proveedor(nombre_proveedor: str, contacto: str):
+        """Inserta un nuevo proveedor cifrando su información"""
         try:
             conexion = RepositorioProveedores.obtener_conexion()
             if isinstance(conexion, dict):
@@ -68,3 +72,47 @@ class RepositorioProveedores:
             return {"Mensaje": "Proveedor insertado correctamente"}
         except Exception as ex:
             return {"Error": f"Error al insertar proveedor: {ex}"}
+
+    @staticmethod
+    def actualizar_proveedor(id_proveedor: int, nombre_proveedor: str, contacto: str):
+        """Actualiza un proveedor cifrando sus nuevos datos"""
+        try:
+            conexion = RepositorioProveedores.obtener_conexion()
+            if isinstance(conexion, dict):
+                return conexion
+
+            cursor = conexion.cursor()
+
+            nombre_cifrado = RepositorioProveedores.encriptarAES.cifrar(nombre_proveedor)
+            contacto_cifrado = RepositorioProveedores.encriptarAES.cifrar(contacto)
+
+            consulta = """UPDATE Proveedores SET NombreProveedor=?, Contacto=? WHERE IDProveedor=?"""
+            cursor.execute(consulta, (nombre_cifrado, contacto_cifrado, id_proveedor))
+            conexion.commit()
+
+            cursor.close()
+            conexion.close()
+            return {"Mensaje": "Proveedor actualizado correctamente"}
+        except Exception as ex:
+            return {"Error": f"Error al actualizar proveedor: {ex}"}
+
+    @staticmethod
+    def eliminar_proveedor(id_proveedor: int):
+        """Elimina un proveedor por su ID"""
+        try:
+            conexion = RepositorioProveedores.obtener_conexion()
+            if isinstance(conexion, dict):
+                return conexion
+
+            cursor = conexion.cursor()
+
+            consulta = """DELETE FROM Proveedores WHERE IDProveedor=?"""
+            cursor.execute(consulta, (id_proveedor,))
+            conexion.commit()
+
+            cursor.close()
+            conexion.close()
+            return {"Mensaje": "Proveedor eliminado correctamente"}
+        except Exception as ex:
+            return {"Error": f"Error al eliminar proveedor: {ex}"}
+ 

@@ -4,11 +4,13 @@ from Utilidades.configuracion import Configuracion
 from Utilidades.SeguridadAES import SeguridadAES  
 
 class RepositorioDetallesTransaccion:
+    """Clase para gestionar detalles de transacciones con cifrado AES-GCM"""
 
     encriptarAES = SeguridadAES()
 
     @staticmethod
     def obtener_conexion():
+        """Obtiene una conexión segura a la base de datos"""
         try:
             return pyodbc.connect(Configuracion.strConnection)
         except Exception as ex:
@@ -16,6 +18,7 @@ class RepositorioDetallesTransaccion:
 
     @staticmethod
     def listar_detalles_transaccion():
+        """Lista los detalles de transacciones y descifra los datos si es posible"""
         try:
             conexion = RepositorioDetallesTransaccion.obtener_conexion()
             if isinstance(conexion, dict):
@@ -48,6 +51,7 @@ class RepositorioDetallesTransaccion:
 
     @staticmethod
     def insertar_detalle_transaccion(id_transaccion: int, id_producto: int, cantidad: int):
+        """Inserta un nuevo detalle de transacción cifrando la cantidad"""
         try:
             conexion = RepositorioDetallesTransaccion.obtener_conexion()
             if isinstance(conexion, dict):
@@ -66,3 +70,46 @@ class RepositorioDetallesTransaccion:
             return {"Mensaje": "Detalle de transacción insertado correctamente"}
         except Exception as ex:
             return {"Error": f"Error al insertar detalle de transacción: {ex}"}
+
+    @staticmethod
+    def actualizar_detalle_transaccion(id_detalle: int, id_transaccion: int, id_producto: int, cantidad: int):
+        """Actualiza un detalle de transacción cifrando la cantidad"""
+        try:
+            conexion = RepositorioDetallesTransaccion.obtener_conexion()
+            if isinstance(conexion, dict):
+                return conexion
+
+            cursor = conexion.cursor()
+
+            cantidad_cifrada = RepositorioDetallesTransaccion.encriptarAES.cifrar(str(cantidad))
+
+            consulta = """UPDATE DetallesTransaccion SET IDTransaccion=?, IDProducto=?, Cantidad=? WHERE IDDetalle=?"""
+            cursor.execute(consulta, (id_transaccion, id_producto, cantidad_cifrada, id_detalle))
+            conexion.commit()
+
+            cursor.close()
+            conexion.close()
+            return {"Mensaje": "Detalle de transacción actualizado correctamente"}
+        except Exception as ex:
+            return {"Error": f"Error al actualizar detalle de transacción: {ex}"}
+
+    @staticmethod
+    def eliminar_detalle_transaccion(id_detalle: int):
+        """Elimina un detalle de transacción por su ID"""
+        try:
+            conexion = RepositorioDetallesTransaccion.obtener_conexion()
+            if isinstance(conexion, dict):
+                return conexion
+
+            cursor = conexion.cursor()
+
+            consulta = """DELETE FROM DetallesTransaccion WHERE IDDetalle=?"""
+            cursor.execute(consulta, (id_detalle,))
+            conexion.commit()
+
+            cursor.close()
+            conexion.close()
+            return {"Mensaje": "Detalle de transacción eliminado correctamente"}
+        except Exception as ex:
+            return {"Error": f"Error al eliminar detalle de transacción: {ex}"}
+ 

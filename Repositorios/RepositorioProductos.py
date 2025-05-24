@@ -4,11 +4,13 @@ from Utilidades.configuracion import Configuracion
 from Utilidades.SeguridadAES import SeguridadAES  
 
 class RepositorioProductos:
+    """Clase para gestionar productos con cifrado AES-GCM"""
 
     encriptarAES = SeguridadAES()
 
     @staticmethod
     def obtener_conexion():
+        """Obtiene una conexión segura a la base de datos"""
         try:
             return pyodbc.connect(Configuracion.strConnection)
         except Exception as ex:
@@ -16,6 +18,7 @@ class RepositorioProductos:
 
     @staticmethod
     def listar_productos():
+        """Lista los productos, descifrando los nombres y precios si es posible"""
         try:
             conexion = RepositorioProductos.obtener_conexion()
             if isinstance(conexion, dict):
@@ -50,6 +53,7 @@ class RepositorioProductos:
 
     @staticmethod
     def listar_productos_con_categoria():
+        """Lista productos con sus categorías asociadas"""
         try:
             conexion = RepositorioProductos.obtener_conexion()
             if isinstance(conexion, dict):
@@ -78,6 +82,7 @@ class RepositorioProductos:
 
     @staticmethod
     def insertar_producto(nombre: str, id_categoria: int, precio: float):
+        """Inserta un nuevo producto cifrando su nombre y precio"""
         try:
             conexion = RepositorioProductos.obtener_conexion()
             if isinstance(conexion, dict):
@@ -97,3 +102,47 @@ class RepositorioProductos:
             return {"Mensaje": "Producto insertado correctamente"}
         except Exception as ex:
             return {"Error": f"Error al insertar producto: {ex}"}
+
+    @staticmethod
+    def actualizar_producto(id_producto: int, nombre: str, id_categoria: int, precio: float):
+        """Actualiza un producto cifrando sus nuevos datos"""
+        try:
+            conexion = RepositorioProductos.obtener_conexion()
+            if isinstance(conexion, dict):
+                return conexion
+
+            cursor = conexion.cursor()
+
+            nombre_cifrado = RepositorioProductos.encriptarAES.cifrar(nombre)
+            precio_cifrado = RepositorioProductos.encriptarAES.cifrar(str(precio))
+
+            consulta = """UPDATE Productos SET NombreProducto=?, IDCategoria=?, Precio=? WHERE IDProducto=?"""
+            cursor.execute(consulta, (nombre_cifrado, id_categoria, precio_cifrado, id_producto))
+            conexion.commit()
+
+            cursor.close()
+            conexion.close()
+            return {"Mensaje": "Producto actualizado correctamente"}
+        except Exception as ex:
+            return {"Error": f"Error al actualizar producto: {ex}"}
+
+    @staticmethod
+    def eliminar_producto(id_producto: int):
+        """Elimina un producto por su ID"""
+        try:
+            conexion = RepositorioProductos.obtener_conexion()
+            if isinstance(conexion, dict):
+                return conexion
+
+            cursor = conexion.cursor()
+
+            consulta = """DELETE FROM Productos WHERE IDProducto=?"""
+            cursor.execute(consulta, (id_producto,))
+            conexion.commit()
+
+            cursor.close()
+            conexion.close()
+            return {"Mensaje": "Producto eliminado correctamente"}
+        except Exception as ex:
+            return {"Error": f"Error al eliminar producto: {ex}"}
+ 

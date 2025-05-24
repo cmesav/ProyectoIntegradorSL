@@ -4,11 +4,13 @@ from Utilidades.configuracion import Configuracion
 from Utilidades.SeguridadAES import SeguridadAES  
 
 class RepositorioTransacciones:
+    """Clase para gestionar transacciones con cifrado AES-GCM"""
 
     encriptarAES = SeguridadAES()
 
     @staticmethod
     def obtener_conexion():
+        """Obtiene una conexión segura a la base de datos"""
         try:
             return pyodbc.connect(Configuracion.strConnection)
         except Exception as ex:
@@ -16,6 +18,7 @@ class RepositorioTransacciones:
 
     @staticmethod
     def listar_transacciones():
+        """Lista las transacciones y descifra la fecha si es posible"""
         try:
             conexion = RepositorioTransacciones.obtener_conexion()
             if isinstance(conexion, dict):
@@ -49,6 +52,7 @@ class RepositorioTransacciones:
 
     @staticmethod
     def insertar_transaccion(id_usuario: int, fecha: str, id_metodo_pago: int, id_estado_transaccion: int):
+        """Inserta una nueva transacción con datos cifrados"""
         try:
             conexion = RepositorioTransacciones.obtener_conexion()
             if isinstance(conexion, dict):
@@ -68,3 +72,46 @@ class RepositorioTransacciones:
             return {"Mensaje": "Transacción insertada correctamente"}
         except Exception as ex:
             return {"Error": f"Error al insertar transacción: {ex}"}
+
+    @staticmethod
+    def actualizar_transaccion(id_transaccion: int, fecha: str, id_metodo_pago: int, id_estado_transaccion: int):
+        """Actualiza una transacción existente cifrando la fecha"""
+        try:
+            conexion = RepositorioTransacciones.obtener_conexion()
+            if isinstance(conexion, dict):
+                return conexion
+
+            cursor = conexion.cursor()
+
+            fecha_cifrada = RepositorioTransacciones.encriptarAES.cifrar(fecha)
+
+            consulta = """UPDATE Transacciones SET Fecha=?, IDMetodoPago=?, IDEstadoTransaccion=? WHERE IDTransaccion=?"""
+            cursor.execute(consulta, (fecha_cifrada, id_metodo_pago, id_estado_transaccion, id_transaccion))
+            conexion.commit()
+
+            cursor.close()
+            conexion.close()
+            return {"Mensaje": "Transacción actualizada correctamente"}
+        except Exception as ex:
+            return {"Error": f"Error al actualizar transacción: {ex}"}
+
+    @staticmethod
+    def eliminar_transaccion(id_transaccion: int):
+        """Elimina una transacción por su ID"""
+        try:
+            conexion = RepositorioTransacciones.obtener_conexion()
+            if isinstance(conexion, dict):
+                return conexion
+
+            cursor = conexion.cursor()
+
+            consulta = """DELETE FROM Transacciones WHERE IDTransaccion=?"""
+            cursor.execute(consulta, (id_transaccion,))
+            conexion.commit()
+
+            cursor.close()
+            conexion.close()
+            return {"Mensaje": "Transacción eliminada correctamente"}
+        except Exception as ex:
+            return {"Error": f"Error al eliminar transacción: {ex}"}
+ 
