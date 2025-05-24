@@ -1,10 +1,8 @@
 import pyodbc
-from Entidades.Transaccion import Transaccion
 from Utilidades.configuracion import Configuracion  
 from Utilidades.SeguridadAES import SeguridadAES  
 
 class RepositorioTransacciones:
-    """Clase para gestionar transacciones con cifrado AES-GCM"""
 
     encriptarAES = SeguridadAES()
 
@@ -18,7 +16,6 @@ class RepositorioTransacciones:
 
     @staticmethod
     def listar_transacciones():
-        """Lista las transacciones y descifra la fecha si es posible"""
         try:
             conexion = RepositorioTransacciones.obtener_conexion()
             if isinstance(conexion, dict):
@@ -52,7 +49,6 @@ class RepositorioTransacciones:
 
     @staticmethod
     def insertar_transaccion(id_usuario: int, fecha: str, id_metodo_pago: int, id_estado_transaccion: int):
-        """Inserta una nueva transacción con datos cifrados"""
         try:
             conexion = RepositorioTransacciones.obtener_conexion()
             if isinstance(conexion, dict):
@@ -75,7 +71,6 @@ class RepositorioTransacciones:
 
     @staticmethod
     def actualizar_transaccion(id_transaccion: int, fecha: str, id_metodo_pago: int, id_estado_transaccion: int):
-        """Actualiza una transacción existente cifrando la fecha"""
         try:
             conexion = RepositorioTransacciones.obtener_conexion()
             if isinstance(conexion, dict):
@@ -97,7 +92,6 @@ class RepositorioTransacciones:
 
     @staticmethod
     def eliminar_transaccion(id_transaccion: int):
-        """Elimina una transacción por su ID"""
         try:
             conexion = RepositorioTransacciones.obtener_conexion()
             if isinstance(conexion, dict):

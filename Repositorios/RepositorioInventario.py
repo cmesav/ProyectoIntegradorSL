@@ -1,10 +1,8 @@
 import pyodbc
-from Entidades.Inventario import Inventario
 from Utilidades.configuracion import Configuracion  
 from Utilidades.SeguridadAES import SeguridadAES  
 
 class RepositorioInventario:
-    """Clase para gestionar el inventario con cifrado AES-GCM"""
 
     encriptarAES = SeguridadAES()
 
@@ -18,7 +16,6 @@ class RepositorioInventario:
 
     @staticmethod
     def listar_inventario():
-        """Lista el inventario, descifrando la cantidad disponible si es posible"""
         try:
             conexion = RepositorioInventario.obtener_conexion()
             if isinstance(conexion, dict):
@@ -50,7 +47,6 @@ class RepositorioInventario:
 
     @staticmethod
     def insertar_inventario(id_producto: int, cantidad_disponible: int):
-        """Inserta un nuevo registro en el inventario cifrando la cantidad disponible"""
         try:
             conexion = RepositorioInventario.obtener_conexion()
             if isinstance(conexion, dict):
@@ -72,7 +68,6 @@ class RepositorioInventario:
 
     @staticmethod
     def actualizar_inventario(id_producto: int, cantidad_disponible: int):
-        """Actualiza la cantidad disponible de un producto en el inventario"""
         try:
             conexion = RepositorioInventario.obtener_conexion()
             if isinstance(conexion, dict):
@@ -94,7 +89,6 @@ class RepositorioInventario:
 
     @staticmethod
     def eliminar_inventario(id_producto: int):
-        """Elimina un registro del inventario por su ID de producto"""
         try:
             conexion = RepositorioInventario.obtener_conexion()
             if isinstance(conexion, dict):

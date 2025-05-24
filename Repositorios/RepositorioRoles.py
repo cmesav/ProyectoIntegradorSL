@@ -4,13 +4,11 @@ from Utilidades.configuracion import Configuracion
 from Utilidades.SeguridadAES import SeguridadAES  
 
 class RepositorioRoles:
-    """Clase para gestionar roles con cifrado AES-GCM"""
 
     encriptarAES = SeguridadAES()
 
     @staticmethod
     def obtener_conexion():
-        """Obtiene una conexión segura a la base de datos"""
         try:
             return pyodbc.connect(Configuracion.strConnection)
         except Exception as ex:
@@ -18,7 +16,6 @@ class RepositorioRoles:
 
     @staticmethod
     def listar_roles():
-        """Lista los roles, descifrando los nombres si es posible"""
         try:
             conexion = RepositorioRoles.obtener_conexion()
             if isinstance(conexion, dict):
@@ -49,7 +46,6 @@ class RepositorioRoles:
 
     @staticmethod
     def insertar_rol(nombre_rol: str):
-        """Inserta un nuevo rol cifrando su nombre"""
         try:
             conexion = RepositorioRoles.obtener_conexion()
             if isinstance(conexion, dict):
@@ -71,7 +67,6 @@ class RepositorioRoles:
 
     @staticmethod
     def actualizar_rol(id_rol: int, nombre_rol: str):
-        """Actualiza un rol por su ID, cifrando el nuevo nombre"""
         try:
             conexion = RepositorioRoles.obtener_conexion()
             if isinstance(conexion, dict):
@@ -93,7 +88,6 @@ class RepositorioRoles:
 
     @staticmethod
     def eliminar_rol(id_rol: int):
-        """Elimina un rol por su ID"""
         try:
             conexion = RepositorioRoles.obtener_conexion()
             if isinstance(conexion, dict):

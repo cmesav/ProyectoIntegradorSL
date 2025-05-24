@@ -1,16 +1,14 @@
 import pyodbc
-from Entidades.Devolucion import Devolucion
+
 from Utilidades.configuracion import Configuracion  
 from Utilidades.SeguridadAES import SeguridadAES  
 
 class RepositorioDevoluciones:
-    """Clase para gestionar devoluciones con cifrado AES-GCM"""
 
     encriptarAES = SeguridadAES()
 
     @staticmethod
     def obtener_conexion():
-        """Obtiene una conexión segura a la base de datos"""
         try:
             return pyodbc.connect(Configuracion.strConnection)
         except Exception as ex:
@@ -18,7 +16,6 @@ class RepositorioDevoluciones:
 
     @staticmethod
     def listar_devoluciones():
-        """Lista las devoluciones y descifra los datos sensibles si es posible"""
         try:
             conexion = RepositorioDevoluciones.obtener_conexion()
             if isinstance(conexion, dict):
@@ -53,7 +50,6 @@ class RepositorioDevoluciones:
 
     @staticmethod
     def insertar_devolucion(id_transaccion: int, motivo: str, fecha: str):
-        """Inserta una nueva devolución cifrando sus datos"""
         try:
             conexion = RepositorioDevoluciones.obtener_conexion()
             if isinstance(conexion, dict):
@@ -76,7 +72,6 @@ class RepositorioDevoluciones:
 
     @staticmethod
     def actualizar_devolucion(id_devolucion: int, id_transaccion: int, motivo: str, fecha: str):
-        """Actualiza una devolución cifrando sus nuevos datos"""
         try:
             conexion = RepositorioDevoluciones.obtener_conexion()
             if isinstance(conexion, dict):
@@ -99,7 +94,6 @@ class RepositorioDevoluciones:
 
     @staticmethod
     def eliminar_devolucion(id_devolucion: int):
-        """Elimina una devolución por su ID"""
         try:
             conexion = RepositorioDevoluciones.obtener_conexion()
             if isinstance(conexion, dict):

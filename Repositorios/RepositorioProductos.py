@@ -1,16 +1,13 @@
 import pyodbc
-from Entidades.Producto import Producto
 from Utilidades.configuracion import Configuracion  
 from Utilidades.SeguridadAES import SeguridadAES  
 
 class RepositorioProductos:
-    """Clase para gestionar productos con cifrado AES-GCM"""
 
     encriptarAES = SeguridadAES()
 
     @staticmethod
     def obtener_conexion():
-        """Obtiene una conexión segura a la base de datos"""
         try:
             return pyodbc.connect(Configuracion.strConnection)
         except Exception as ex:
@@ -18,7 +15,6 @@ class RepositorioProductos:
 
     @staticmethod
     def listar_productos():
-        """Lista los productos, descifrando los nombres y precios si es posible"""
         try:
             conexion = RepositorioProductos.obtener_conexion()
             if isinstance(conexion, dict):
@@ -53,7 +49,6 @@ class RepositorioProductos:
 
     @staticmethod
     def listar_productos_con_categoria():
-        """Lista productos con sus categorías asociadas"""
         try:
             conexion = RepositorioProductos.obtener_conexion()
             if isinstance(conexion, dict):
@@ -82,7 +77,6 @@ class RepositorioProductos:
 
     @staticmethod
     def insertar_producto(nombre: str, id_categoria: int, precio: float):
-        """Inserta un nuevo producto cifrando su nombre y precio"""
         try:
             conexion = RepositorioProductos.obtener_conexion()
             if isinstance(conexion, dict):
@@ -105,7 +99,6 @@ class RepositorioProductos:
 
     @staticmethod
     def actualizar_producto(id_producto: int, nombre: str, id_categoria: int, precio: float):
-        """Actualiza un producto cifrando sus nuevos datos"""
         try:
             conexion = RepositorioProductos.obtener_conexion()
             if isinstance(conexion, dict):
@@ -128,7 +121,6 @@ class RepositorioProductos:
 
     @staticmethod
     def eliminar_producto(id_producto: int):
-        """Elimina un producto por su ID"""
         try:
             conexion = RepositorioProductos.obtener_conexion()
             if isinstance(conexion, dict):

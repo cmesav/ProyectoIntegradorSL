@@ -4,13 +4,11 @@ from Utilidades.configuracion import Configuracion
 from Utilidades.SeguridadAES import SeguridadAES  
 
 class RepositorioProveedores:
-    """Clase para gestionar proveedores con cifrado AES-GCM"""
 
     encriptarAES = SeguridadAES()
 
     @staticmethod
     def obtener_conexion():
-        """Obtiene una conexión segura a la base de datos"""
         try:
             return pyodbc.connect(Configuracion.strConnection)
         except Exception as ex:
@@ -18,7 +16,6 @@ class RepositorioProveedores:
 
     @staticmethod
     def listar_proveedores():
-        """Lista los proveedores, descifrando los datos si es posible"""
         try:
             conexion = RepositorioProveedores.obtener_conexion()
             if isinstance(conexion, dict):
@@ -52,7 +49,6 @@ class RepositorioProveedores:
 
     @staticmethod
     def insertar_proveedor(nombre_proveedor: str, contacto: str):
-        """Inserta un nuevo proveedor cifrando su información"""
         try:
             conexion = RepositorioProveedores.obtener_conexion()
             if isinstance(conexion, dict):
@@ -75,7 +71,6 @@ class RepositorioProveedores:
 
     @staticmethod
     def actualizar_proveedor(id_proveedor: int, nombre_proveedor: str, contacto: str):
-        """Actualiza un proveedor cifrando sus nuevos datos"""
         try:
             conexion = RepositorioProveedores.obtener_conexion()
             if isinstance(conexion, dict):
@@ -98,7 +93,6 @@ class RepositorioProveedores:
 
     @staticmethod
     def eliminar_proveedor(id_proveedor: int):
-        """Elimina un proveedor por su ID"""
         try:
             conexion = RepositorioProveedores.obtener_conexion()
             if isinstance(conexion, dict):

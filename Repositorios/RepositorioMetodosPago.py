@@ -1,16 +1,13 @@
 import pyodbc
-from Entidades.MetodoPago import MetodoPago
 from Utilidades.configuracion import Configuracion  
 from Utilidades.SeguridadAES import SeguridadAES  
 
 class RepositorioMetodosPago:
-    """Clase para gestionar métodos de pago con cifrado AES-GCM"""
 
     encriptarAES = SeguridadAES()
 
     @staticmethod
     def obtener_conexion():
-        """Obtiene una conexión segura a la base de datos"""
         try:
             return pyodbc.connect(Configuracion.strConnection)
         except Exception as ex:
@@ -18,7 +15,6 @@ class RepositorioMetodosPago:
 
     @staticmethod
     def listar_metodos_pago():
-        """Lista los métodos de pago, descifrando los nombres si es posible"""
         try:
             conexion = RepositorioMetodosPago.obtener_conexion()
             if isinstance(conexion, dict):
@@ -49,7 +45,6 @@ class RepositorioMetodosPago:
 
     @staticmethod
     def insertar_metodo_pago(nombre_metodo: str):
-        """Inserta un nuevo método de pago cifrando su nombre"""
         try:
             conexion = RepositorioMetodosPago.obtener_conexion()
             if isinstance(conexion, dict):
@@ -71,7 +66,6 @@ class RepositorioMetodosPago:
 
     @staticmethod
     def actualizar_metodo_pago(id_metodo_pago: int, nombre_metodo: str):
-        """Actualiza un método de pago cifrando su nuevo nombre"""
         try:
             conexion = RepositorioMetodosPago.obtener_conexion()
             if isinstance(conexion, dict):
@@ -93,7 +87,6 @@ class RepositorioMetodosPago:
 
     @staticmethod
     def eliminar_metodo_pago(id_metodo_pago: int):
-        """Elimina un método de pago por su ID"""
         try:
             conexion = RepositorioMetodosPago.obtener_conexion()
             if isinstance(conexion, dict):

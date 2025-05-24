@@ -1,16 +1,13 @@
 import pyodbc
-from Entidades.DetalleTransaccion import DetalleTransaccion
 from Utilidades.configuracion import Configuracion  
 from Utilidades.SeguridadAES import SeguridadAES  
 
 class RepositorioDetallesTransaccion:
-    """Clase para gestionar detalles de transacciones con cifrado AES-GCM"""
 
     encriptarAES = SeguridadAES()
 
     @staticmethod
     def obtener_conexion():
-        """Obtiene una conexión segura a la base de datos"""
         try:
             return pyodbc.connect(Configuracion.strConnection)
         except Exception as ex:
@@ -18,7 +15,6 @@ class RepositorioDetallesTransaccion:
 
     @staticmethod
     def listar_detalles_transaccion():
-        """Lista los detalles de transacciones y descifra los datos si es posible"""
         try:
             conexion = RepositorioDetallesTransaccion.obtener_conexion()
             if isinstance(conexion, dict):
@@ -51,7 +47,6 @@ class RepositorioDetallesTransaccion:
 
     @staticmethod
     def insertar_detalle_transaccion(id_transaccion: int, id_producto: int, cantidad: int):
-        """Inserta un nuevo detalle de transacción cifrando la cantidad"""
         try:
             conexion = RepositorioDetallesTransaccion.obtener_conexion()
             if isinstance(conexion, dict):
@@ -73,7 +68,6 @@ class RepositorioDetallesTransaccion:
 
     @staticmethod
     def actualizar_detalle_transaccion(id_detalle: int, id_transaccion: int, id_producto: int, cantidad: int):
-        """Actualiza un detalle de transacción cifrando la cantidad"""
         try:
             conexion = RepositorioDetallesTransaccion.obtener_conexion()
             if isinstance(conexion, dict):
@@ -95,7 +89,6 @@ class RepositorioDetallesTransaccion:
 
     @staticmethod
     def eliminar_detalle_transaccion(id_detalle: int):
-        """Elimina un detalle de transacción por su ID"""
         try:
             conexion = RepositorioDetallesTransaccion.obtener_conexion()
             if isinstance(conexion, dict):

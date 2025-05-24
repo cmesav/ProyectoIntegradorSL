@@ -1,16 +1,13 @@
 import pyodbc
-from Entidades.Notificacion import Notificacion
 from Utilidades.configuracion import Configuracion  
 from Utilidades.SeguridadAES import SeguridadAES  
 
 class RepositorioNotificaciones:
-    """Clase para gestionar notificaciones con cifrado AES-GCM"""
 
     encriptarAES = SeguridadAES()
 
     @staticmethod
     def obtener_conexion():
-        """Obtiene una conexión segura a la base de datos"""
         try:
             return pyodbc.connect(Configuracion.strConnection)
         except Exception as ex:
@@ -18,7 +15,6 @@ class RepositorioNotificaciones:
 
     @staticmethod
     def listar_notificaciones():
-        """Lista las notificaciones y descifra los datos si es posible"""
         try:
             conexion = RepositorioNotificaciones.obtener_conexion()
             if isinstance(conexion, dict):
@@ -53,7 +49,6 @@ class RepositorioNotificaciones:
 
     @staticmethod
     def insertar_notificacion(id_usuario: int, mensaje: str, fecha: str):
-        """Inserta una nueva notificación cifrando su mensaje y fecha"""
         try:
             conexion = RepositorioNotificaciones.obtener_conexion()
             if isinstance(conexion, dict):
@@ -76,7 +71,6 @@ class RepositorioNotificaciones:
 
     @staticmethod
     def actualizar_notificacion(id_notificacion: int, mensaje: str, fecha: str):
-        """Actualiza una notificación cifrando sus nuevos datos"""
         try:
             conexion = RepositorioNotificaciones.obtener_conexion()
             if isinstance(conexion, dict):
@@ -99,7 +93,6 @@ class RepositorioNotificaciones:
 
     @staticmethod
     def eliminar_notificacion(id_notificacion: int):
-        """Elimina una notificación por su ID"""
         try:
             conexion = RepositorioNotificaciones.obtener_conexion()
             if isinstance(conexion, dict):

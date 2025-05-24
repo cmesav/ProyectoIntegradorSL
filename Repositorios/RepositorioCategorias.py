@@ -1,16 +1,13 @@
 import pyodbc
-from Entidades.Categoria import Categoria
 from Utilidades.configuracion import Configuracion  
 from Utilidades.SeguridadAES import SeguridadAES  
 
 class RepositorioCategorias:
-    """Clase para gestionar categorías con cifrado AES-GCM"""
 
     encriptarAES = SeguridadAES()
 
     @staticmethod
     def obtener_conexion():
-        """Obtiene una conexión segura a la base de datos"""
         try:
             return pyodbc.connect(Configuracion.strConnection)
         except Exception as ex:
@@ -18,7 +15,6 @@ class RepositorioCategorias:
 
     @staticmethod
     def listar_categorias():
-        """Lista las categorías, descifrando los nombres si es posible"""
         try:
             conexion = RepositorioCategorias.obtener_conexion()
             if isinstance(conexion, dict):
@@ -49,7 +45,6 @@ class RepositorioCategorias:
 
     @staticmethod
     def insertar_categoria(nombre_categoria: str):
-        """Inserta una nueva categoría cifrando su nombre"""
         try:
             conexion = RepositorioCategorias.obtener_conexion()
             if isinstance(conexion, dict):
@@ -71,7 +66,6 @@ class RepositorioCategorias:
 
     @staticmethod
     def actualizar_categoria(id_categoria: int, nombre_categoria: str):
-        """Actualiza una categoría cifrando su nuevo nombre"""
         try:
             conexion = RepositorioCategorias.obtener_conexion()
             if isinstance(conexion, dict):
@@ -93,7 +87,6 @@ class RepositorioCategorias:
 
     @staticmethod
     def eliminar_categoria(id_categoria: int):
-        """Elimina una categoría por su ID"""
         try:
             conexion = RepositorioCategorias.obtener_conexion()
             if isinstance(conexion, dict):

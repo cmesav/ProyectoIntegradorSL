@@ -1,16 +1,13 @@
 import pyodbc
-from Entidades.DireccionUsuario import DireccionUsuario
 from Utilidades.configuracion import Configuracion  
 from Utilidades.SeguridadAES import SeguridadAES  
 
 class RepositorioDireccionesUsuarios:
-    """Clase para gestionar direcciones de usuarios con cifrado AES-GCM"""
 
     encriptarAES = SeguridadAES()
 
     @staticmethod
     def obtener_conexion():
-        """Obtiene una conexión segura a la base de datos"""
         try:
             return pyodbc.connect(Configuracion.strConnection)
         except Exception as ex:
@@ -18,7 +15,6 @@ class RepositorioDireccionesUsuarios:
 
     @staticmethod
     def listar_direcciones_usuarios():
-        """Lista las direcciones de usuarios, descifrando los datos si es posible"""
         try:
             conexion = RepositorioDireccionesUsuarios.obtener_conexion()
             if isinstance(conexion, dict):
@@ -50,7 +46,6 @@ class RepositorioDireccionesUsuarios:
 
     @staticmethod
     def insertar_direccion_usuario(id_usuario: int, direccion: str):
-        """Inserta una nueva dirección de usuario cifrando sus datos"""
         try:
             conexion = RepositorioDireccionesUsuarios.obtener_conexion()
             if isinstance(conexion, dict):
@@ -72,7 +67,6 @@ class RepositorioDireccionesUsuarios:
 
     @staticmethod
     def actualizar_direccion_usuario(id_direccion: int, id_usuario: int, nueva_direccion: str):
-        """Actualiza una dirección de usuario cifrando sus nuevos datos"""
         try:
             conexion = RepositorioDireccionesUsuarios.obtener_conexion()
             if isinstance(conexion, dict):
@@ -94,7 +88,6 @@ class RepositorioDireccionesUsuarios:
 
     @staticmethod
     def eliminar_direccion_usuario(id_direccion: int):
-        """Elimina una dirección de usuario por su ID"""
         try:
             conexion = RepositorioDireccionesUsuarios.obtener_conexion()
             if isinstance(conexion, dict):

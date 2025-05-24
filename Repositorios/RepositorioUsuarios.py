@@ -1,17 +1,14 @@
 import pyodbc
 import re
-from Entidades import Usuario
 from Utilidades.configuracion import Configuracion  
 from Utilidades.SeguridadAES import SeguridadAES  
 
 class RepositorioUsuarios:
-    """Clase estática para gestionar usuarios con cifrado AES-GCM"""
 
     encriptarAES = SeguridadAES()
 
     @staticmethod
     def obtener_conexion():
-        """Obtiene una conexión segura a la base de datos"""
         try:
             return pyodbc.connect(Configuracion.strConnection)
         except Exception as ex:
@@ -19,13 +16,11 @@ class RepositorioUsuarios:
 
     @staticmethod
     def es_correo_valido(correo: str) -> bool:
-        """Valida si el correo tiene un formato correcto sin eliminar caracteres especiales válidos"""
         patron_correo = r"^[\w.%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"
         return re.match(patron_correo, correo) is not None
 
     @staticmethod
     def listar_usuarios():
-        """Lista los usuarios descifrando los datos con validación mejorada"""
         try:
             conexion = RepositorioUsuarios.obtener_conexion()
             if isinstance(conexion, dict):
@@ -40,7 +35,6 @@ class RepositorioUsuarios:
                 try:
                     correo_descifrado = RepositorioUsuarios.encriptarAES.descifrar(usuario[2])
 
-                    # ✅ Usa la validación corregida
                     if not RepositorioUsuarios.es_correo_valido(correo_descifrado):
                         correo_descifrado = usuario[2]  # Si el descifrado falla, usa el valor cifrado original
 
@@ -72,7 +66,6 @@ class RepositorioUsuarios:
 
             cursor = conexion.cursor()
 
-            # ✅ Validación de correo antes de cifrarlo
             if not RepositorioUsuarios.es_correo_valido(correo):
                 return {"Error": "El correo ingresado tiene un formato incorrecto"}
 
@@ -99,8 +92,7 @@ class RepositorioUsuarios:
                 return conexion
 
             cursor = conexion.cursor()
-
-            # ✅ Validación del correo antes de actualizarlo
+            
             if not RepositorioUsuarios.es_correo_valido(correo):
                 return {"Error": "El correo ingresado tiene un formato incorrecto"}
 
