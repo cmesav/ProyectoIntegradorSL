@@ -8,7 +8,6 @@ class RepositorioInventario:
 
     @staticmethod
     def obtener_conexion():
-        """Obtiene una conexión segura a la base de datos"""
         try:
             return pyodbc.connect(Configuracion.strConnection)
         except Exception as ex:

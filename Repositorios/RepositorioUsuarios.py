@@ -58,7 +58,6 @@ class RepositorioUsuarios:
 
     @staticmethod
     def insertar_usuario(nombre: str, correo: str, contrasena: str, id_rol: int):
-        """Inserta un usuario cifrando datos sensibles"""
         try:
             conexion = RepositorioUsuarios.obtener_conexion()
             if isinstance(conexion, dict):
@@ -85,7 +84,6 @@ class RepositorioUsuarios:
 
     @staticmethod
     def actualizar_usuario(id_usuario: int, nombre: str, correo: str, contrasena: str):
-        """Actualiza un usuario cifrando sus nuevos datos"""
         try:
             conexion = RepositorioUsuarios.obtener_conexion()
             if isinstance(conexion, dict):
@@ -112,7 +110,6 @@ class RepositorioUsuarios:
 
     @staticmethod
     def eliminar_usuario(id_usuario: int):
-        """Elimina un usuario por su ID"""
         try:
             conexion = RepositorioUsuarios.obtener_conexion()
             if isinstance(conexion, dict):
