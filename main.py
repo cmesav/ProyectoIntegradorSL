@@ -12,6 +12,7 @@ from Repositorios.RepositorioDireccionesUsuarios import RepositorioDireccionesUs
 from Repositorios.RepositorioDevoluciones import RepositorioDevoluciones
 from Repositorios.RepositorioDetallesTransaccion import RepositorioDetallesTransaccion
 from Repositorios.RepositorioCategorias import RepositorioCategorias
+from Repositorios.RepositorioNotificaciones import RepositorioNotificaciones
 
 app = Flask(__name__)  
 
@@ -41,6 +42,15 @@ def listar_transacciones():
 def insertar_transaccion():
     datos = request.json
     return jsonify(RepositorioTransacciones.insertar_transaccion(datos["IDUsuario"], datos["Fecha"], datos["IDMetodoPago"], datos["IDEstadoTransaccion"]))
+
+@app.route('/transacciones/actualizar', methods=["PUT"])
+def actualizar_transaccion():
+    datos = request.json
+    return jsonify(RepositorioTransacciones.actualizar_transaccion(datos["ID"], datos["Fecha"], datos["IDMetodoPago"], datos["IDEstadoTransaccion"]))
+
+@app.route('/transacciones/eliminar/<int:id_transaccion>', methods=["DELETE"])
+def eliminar_transaccion(id_transaccion):
+    return jsonify(RepositorioTransacciones.eliminar_transaccion(id_transaccion))
 
 @app.route('/productos/listar', methods=["GET"])
 def listar_productos():
@@ -125,15 +135,24 @@ def actualizar_metodo_pago():
 def eliminar_metodo_pago(id_metodo):
     return jsonify(RepositorioMetodosPago.eliminar_metodo_pago(id_metodo))
 
-
 @app.route('/inventario/listar', methods=["GET"])
 def listar_inventario():
     return jsonify({"Inventario": RepositorioInventario.listar_inventario()})
 
+@app.route('/inventario/insertar', methods=["POST"])
+def agregar_inventario():
+    datos = request.json
+    return jsonify(RepositorioInventario.insertar_inventario(datos["IDProducto"], datos["CantidadDisponible"]))
+
 @app.route('/inventario/actualizar', methods=["PUT"])
 def actualizar_inventario():
     datos = request.json
-    return jsonify(RepositorioInventario.actualizar_inventario(datos["IDProducto"], datos["CantidadDisponible"]))
+    return jsonify(RepositorioInventario.actualizar_inventario(datos["ID"], datos["CantidadDisponible"]))
+
+@app.route('/inventario/eliminar/<int:id_producto>', methods=["DELETE"])
+def eliminar_inventario(id_producto):
+    return jsonify(RepositorioInventario.eliminar_inventario(id_producto))
+
 
 @app.route('/historial_precios/listar', methods=["GET"])
 def listar_historial_precios():
@@ -239,7 +258,6 @@ def actualizar_detalle_transaccion():
 def eliminar_detalle_transaccion(id_detalle):
     return jsonify(RepositorioDetallesTransaccion.eliminar_detalle_transaccion(id_detalle))
 
-
 @app.route('/categorias/listar', methods=["GET"])
 def listar_categorias():
     return jsonify({"Categorias": RepositorioCategorias.listar_categorias()})
@@ -259,6 +277,28 @@ def actualizar_categoria():
 @app.route('/categorias/eliminar/<int:id_categoria>', methods=["DELETE"])
 def eliminar_categoria(id_categoria):
     return jsonify(RepositorioCategorias.eliminar_categoria(id_categoria))
+
+@app.route('/notificaciones/listar', methods=["GET"])
+def listar_notificaciones():
+    return jsonify({"Notificaciones": RepositorioNotificaciones.listar_notificaciones()})
+
+@app.route('/notificaciones/insertar', methods=["POST"])
+def insertar_notificacion():
+    datos = request.json
+    return jsonify(RepositorioNotificaciones.insertar_notificacion(
+        datos["IDUsuario"], datos["Mensaje"], datos["Fecha"]
+    ))
+
+@app.route('/notificaciones/actualizar', methods=["PUT"])
+def actualizar_notificacion():
+    datos = request.json
+    return jsonify(RepositorioNotificaciones.actualizar_notificacion(
+        datos["ID"], datos["Mensaje"], datos["Fecha"]
+    ))
+
+@app.route('/notificaciones/eliminar/<int:id_notificacion>', methods=["DELETE"])
+def eliminar_notificacion(id_notificacion):
+    return jsonify(RepositorioNotificaciones.eliminar_notificacion(id_notificacion))
 
 
 if __name__ == "__main__":
