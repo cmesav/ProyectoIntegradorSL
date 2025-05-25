@@ -1,7 +1,6 @@
-import jwt
 from flask import request, jsonify
 from functools import wraps
-from Utilidades.JWTEncriptador import JWTEncriptador
+from utilidades.JWTEncriptador import JWTEncriptador
 
 jwt_encriptador = JWTEncriptador()
 jwt_encriptador.SetClave("12346467987987")

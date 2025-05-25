@@ -1,26 +1,23 @@
 from flask import Flask, jsonify, request
-from routes.usuarios import usuarios_bp
-from routes.transacciones import transacciones_bp
-from routes.productos import productos_bp
-from routes.proveedores import proveedores_bp
-from routes.roles import roles_bp
-from routes.metodos_pago import metodos_pago_bp
-from routes.inventario import inventario_bp
-from routes.historial_precios import historial_precios_bp
-from routes.estado_transaccion import estado_transaccion_bp
-from routes.direcciones_usuarios import direcciones_usuarios_bp
-from routes.devoluciones import devoluciones_bp
-from routes.detalles_transaccion import detalles_transaccion_bp
-from routes.categorias import categorias_bp
-from routes.notificaciones import notificaciones_bp
-from Utilidades.autenticacion import requiere_token, validar_token
-from Utilidades.JWTEncriptador import JWTEncriptador
+from blueprint.usuarios import usuarios_bp
+from blueprint.transacciones import transacciones_bp
+from blueprint.productos import productos_bp
+from blueprint.proveedores import proveedores_bp
+from blueprint.roles import roles_bp
+from blueprint.metodos_pago import metodos_pago_bp
+from blueprint.inventario import inventario_bp
+from blueprint.historial_precios import historial_precios_bp
+from blueprint.estado_transaccion import estado_transaccion_bp
+from blueprint.direcciones_usuarios import direcciones_usuarios_bp
+from blueprint.devoluciones import devoluciones_bp
+from blueprint.detalles_transaccion import detalles_transaccion_bp
+from blueprint.categorias import categorias_bp
+from blueprint.notificaciones import notificaciones_bp
+from utilidades.autenticacion import JWTEncriptador
 
-# Configurar Flask
 app = Flask(__name__)
 app.config['JSON_SORT_KEYS'] = False
 
-# Configurar autenticación JWT
 jwt_encriptador = JWTEncriptador()
 jwt_encriptador.SetClave("12346467987987")
 

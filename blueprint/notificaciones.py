@@ -1,6 +1,6 @@
 from flask import Blueprint, request, jsonify
 from servicios.servicio_notificaciones import ServicioNotificaciones
-from Utilidades.autenticacion import requiere_token
+from utilidades.autenticacion import requiere_token
 
 notificaciones_bp = Blueprint('notificaciones_bp', __name__)
 

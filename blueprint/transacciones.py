@@ -1,6 +1,6 @@
 from flask import Blueprint, request, jsonify
 from servicios.servicio_transacciones import ServicioTransacciones
-from Utilidades.autenticacion import requiere_token
+from utilidades.autenticacion import requiere_token
 
 transacciones_bp = Blueprint('transacciones_bp', __name__)
 

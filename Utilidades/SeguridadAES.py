@@ -4,7 +4,6 @@ from Crypto.Cipher import AES
 class SeguridadAES:
 
     def __init__(self):
-        """Usa una clave AES fija para evitar errores de descifrado."""
         self.key = bytes.fromhex("c2a572d0f94e4d7b8eaf638c8b1e2f90a8d77e2ff3c31e1b2c4a7d8c3f015b72")
 
     def cifrar(self, valor: str) -> str:
