@@ -1,4 +1,4 @@
-from Repositorios.RepositorioCategorias import RepositorioCategorias
+from repositorios.RepositorioCategorias import RepositorioCategorias
 
 class ServicioCategorias:
     @staticmethod

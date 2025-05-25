@@ -1,4 +1,4 @@
-from Repositorios.RepositorioHistorialPrecios import RepositorioHistorialPrecios
+from repositorios.RepositorioHistorialPrecios import RepositorioHistorialPrecios
 
 class ServicioHistorialPrecios:
     @staticmethod

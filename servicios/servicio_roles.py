@@ -1,4 +1,4 @@
-from Repositorios.RepositorioRoles import RepositorioRoles
+from repositorios.RepositorioRoles import RepositorioRoles
 
 class ServicioRoles:
     @staticmethod

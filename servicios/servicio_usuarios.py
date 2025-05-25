@@ -1,4 +1,4 @@
-from Repositorios.RepositorioUsuarios import RepositorioUsuarios
+from repositorios.RepositorioUsuarios import RepositorioUsuarios
 
 class ServicioUsuarios:
     @staticmethod

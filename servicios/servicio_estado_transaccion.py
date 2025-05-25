@@ -1,4 +1,4 @@
-from Repositorios.RepositorioEstadoTransaccion import RepositorioEstadoTransaccion
+from repositorios.RepositorioEstadoTransaccion import RepositorioEstadoTransaccion
 
 class ServicioEstadoTransaccion:
     @staticmethod

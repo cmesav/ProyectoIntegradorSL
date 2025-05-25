@@ -1,4 +1,4 @@
-from Repositorios.RepositorioProductos import RepositorioProductos
+from repositorios.RepositorioProductos import RepositorioProductos
 
 class ServicioProductos:
     @staticmethod

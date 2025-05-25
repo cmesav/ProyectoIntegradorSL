@@ -1,4 +1,4 @@
-from Repositorios.RepositorioMetodosPago import RepositorioMetodosPago
+from repositorios.RepositorioMetodosPago import RepositorioMetodosPago
 
 class ServicioMetodosPago:
     @staticmethod

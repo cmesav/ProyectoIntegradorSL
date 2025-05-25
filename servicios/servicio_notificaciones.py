@@ -1,4 +1,4 @@
-from Repositorios.RepositorioNotificaciones import RepositorioNotificaciones
+from repositorios.RepositorioNotificaciones import RepositorioNotificaciones
 
 class ServicioNotificaciones:
     @staticmethod

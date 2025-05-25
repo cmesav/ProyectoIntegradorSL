@@ -1,7 +1,6 @@
 import pyodbc
-from Entidades.Rol import Rol
-from Utilidades.configuracion import Configuracion  
-from Utilidades.SeguridadAES import SeguridadAES  
+from utilidades.configuracion import Configuracion  
+from utilidades.SeguridadAES import SeguridadAES  
 
 class RepositorioRoles:
 
